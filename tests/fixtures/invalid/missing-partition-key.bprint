@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "v1",
+  "namespace": "acme.orders",
+  "entities": [
+    {
+      "name": "Order",
+      "primaryKey": {},
+      "fields": [
+        { "name": "orderId", "type": "string", "required": true }
+      ]
+    }
+  ]
+}

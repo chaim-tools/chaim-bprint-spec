@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "v1",
+  "namespace": "acme.test",
+  "entities": [
+    {
+      "name": "TestEntity",
+      "primaryKey": { "partitionKey": "id" },
+      "fields": [
+        { "name": "id", "type": "string", "required": true },
+        { "name": "status", "type": "string", "enum": [], "required": false }
+      ]
+    }
+  ]
+}
