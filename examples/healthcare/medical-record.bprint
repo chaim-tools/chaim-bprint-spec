@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "v1",
+  "namespace": "healthcare.clinic.medical-record",
+  "description": "Patient medical history and clinical records for healthcare providers",
+  "entity": {
+    "primaryKey": { 
+      "partitionKey": "patientId",
+      "sortKey": "recordDate"
+    },
+    "fields": [
+      { "name": "recordId", "type": "string", "required": true },
+      { "name": "patientId", "type": "string", "required": true },
+      { "name": "providerId", "type": "string", "required": true },
+      { "name": "recordDate", "type": "timestamp", "required": true },
+      { "name": "recordType", "type": "string", "enum": ["visit", "lab_result", "imaging", "prescription", "procedure"], "required": true },
+      { "name": "diagnosis", "type": "string", "required": false },
+      { "name": "symptoms", "type": "string", "required": false },
+      { "name": "treatment", "type": "string", "required": false },
+      { "name": "medications", "type": "string", "required": false },
+      { "name": "vitalSigns", "type": "string", "required": false },
+      { "name": "notes", "type": "string", "required": false },
+      { "name": "attachments", "type": "string", "required": false }
+    ],
+    "annotations": {
+      "phi": true,
+      "retention": "7years",
+      "encryption": "required",
+      "audit": "required",
+      "compliance": "HIPAA"
+    }
+  }
+}

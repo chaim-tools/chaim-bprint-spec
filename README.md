@@ -45,6 +45,48 @@ chaim-bprint-spec/
 └── .github/workflows/             # CI/CD pipeline
 ```
 
+## Examples
+
+The repository includes comprehensive examples organized by industry, with each `.bprint` file containing a single entity for clean CDK integration:
+
+### **Basic Examples** (`examples/basic/`)
+- **`simple.bprint`** - Minimal schema with single entity
+- **`orders.bprint`** - Basic order management system
+
+### **E-commerce Platform** (`examples/ecommerce/`)
+- **`customer.bprint`** - Customer account and profile management
+- **`product.bprint`** - Product catalog and pricing information
+- **`order.bprint`** - Customer order processing and tracking
+- **`inventory.bprint`** - Multi-warehouse inventory management
+
+### **Financial Services** (`examples/financial/`)
+- **`customer.bprint`** - Customer KYC and compliance information
+- **`account.bprint`** - Bank account management and balances
+- **`transaction.bprint`** - Financial transaction records and audit
+- **`compliance-audit.bprint`** - Regulatory compliance and audit trails
+
+### **Healthcare Systems** (`examples/healthcare/`)
+- **`patient.bprint`** - Patient demographics and medical information
+- **`provider.bprint`** - Healthcare provider credentials and specialties
+- **`appointment.bprint`** - Patient appointment scheduling and management
+- **`medical-record.bprint`** - Clinical records and medical history
+
+### **IoT & Sensors** (`examples/iot/`)
+- **`device.bprint`** - IoT device registration and metadata
+- **`sensor-reading.bprint`** - Time-series sensor data readings
+- **`alert.bprint`** - Device alerts and notification management
+- **`device-group.bprint`** - Logical device grouping and organization
+
+### **Example Features Demonstrated**
+- **Single Entity Per File**: Clean 1:1 mapping for CDK table generation
+- **Composite Keys**: Sort keys for time-series and relationship data
+- **Enums**: Constrained field values for status, types, and categories
+- **Annotations**: PII flags, retention policies, encryption requirements
+- **Default Values**: Field defaults for common scenarios
+- **Industry-Specific Compliance**: HIPAA, SOX, GDPR, PCI-DSS requirements
+- **System-Determined Ownership**: Ownership and access control handled by authentication system
+- **Centralized Metadata**: Database metadata managed in CDK layer, not in .bprint files
+
 ## Minimal Example (.bprint JSON)
 
 ```json

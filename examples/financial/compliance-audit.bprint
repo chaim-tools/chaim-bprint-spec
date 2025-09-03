@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "v1",
+  "namespace": "financial.banking.compliance-audit",
+  "description": "Compliance and audit trail for regulatory requirements in financial services",
+  "entity": {
+    "primaryKey": { 
+      "partitionKey": "auditId",
+      "sortKey": "timestamp"
+    },
+    "fields": [
+      { "name": "auditId", "type": "string", "required": true },
+      { "name": "timestamp", "type": "timestamp", "required": true },
+      { "name": "userId", "type": "string", "required": true },
+      { "name": "action", "type": "string", "required": true },
+      { "name": "resourceType", "type": "string", "required": true },
+      { "name": "resourceId", "type": "string", "required": true },
+      { "name": "details", "type": "string", "required": false },
+      { "name": "ipAddress", "type": "string", "required": false },
+      { "name": "userAgent", "type": "string", "required": false },
+      { "name": "complianceCheck", "type": "string", "enum": ["passed", "failed", "warning"], "required": false }
+    ],
+    "annotations": {
+      "pii": false,
+      "retention": "10years",
+      "encryption": "required",
+      "audit": "required",
+      "immutable": true
+    }
+  }
+}

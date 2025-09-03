@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "v1",
+  "namespace": "iot.sensors.reading",
+  "description": "Time-series sensor data readings from IoT devices",
+  "entity": {
+    "primaryKey": { 
+      "partitionKey": "deviceId",
+      "sortKey": "timestamp"
+    },
+    "fields": [
+      { "name": "readingId", "type": "string", "required": true },
+      { "name": "deviceId", "type": "string", "required": true },
+      { "name": "timestamp", "type": "timestamp", "required": true },
+      { "name": "value", "type": "number", "required": true },
+      { "name": "unit", "type": "string", "required": true },
+      { "name": "quality", "type": "string", "enum": ["excellent", "good", "fair", "poor"], "required": false },
+      { "name": "accuracy", "type": "number", "required": false },
+      { "name": "batteryLevel", "type": "number", "required": false },
+      { "name": "signalStrength", "type": "number", "required": false },
+      { "name": "processed", "type": "boolean", "required": false, "default": false }
+    ],
+    "annotations": {
+      "pii": false,
+      "retention": "2years",
+      "time_series": true,
+      "real_time": true,
+      "compression": "enabled"
+    }
+  }
+}
+

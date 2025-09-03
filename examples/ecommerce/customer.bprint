@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "v1",
+  "namespace": "ecommerce.store.customer",
+  "description": "Customer account information and profile data for e-commerce platform",
+  "entity": {
+    "primaryKey": { "partitionKey": "customerId" },
+    "fields": [
+      { "name": "customerId", "type": "string", "required": true },
+      { "name": "email", "type": "string", "required": true },
+      { "name": "firstName", "type": "string", "required": true },
+      { "name": "lastName", "type": "string", "required": true },
+      { "name": "phone", "type": "string", "required": false },
+      { "name": "dateOfBirth", "type": "timestamp", "required": false },
+      { "name": "isActive", "type": "boolean", "required": false, "default": true },
+      { "name": "membershipTier", "type": "string", "enum": ["bronze", "silver", "gold", "platinum"], "required": false },
+      { "name": "createdAt", "type": "timestamp", "required": true },
+      { "name": "lastLoginAt", "type": "timestamp", "required": false }
+    ],
+    "annotations": {
+      "pii": true,
+      "retention": "7years",
+      "encryption": "required"
+    }
+  }
+}

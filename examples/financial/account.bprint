@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "v1",
+  "namespace": "financial.banking.account",
+  "description": "Bank account information and balance tracking for financial services",
+  "entity": {
+    "primaryKey": { "partitionKey": "accountId" },
+    "fields": [
+      { "name": "accountId", "type": "string", "required": true },
+      { "name": "customerId", "type": "string", "required": true },
+      { "name": "accountNumber", "type": "string", "required": true },
+      { "name": "accountType", "type": "string", "enum": ["checking", "savings", "credit", "investment"], "required": true },
+      { "name": "balance", "type": "number", "required": true },
+      { "name": "currency", "type": "string", "required": false, "default": "USD" },
+      { "name": "status", "type": "string", "enum": ["active", "suspended", "closed", "frozen"], "required": true },
+      { "name": "openedDate", "type": "timestamp", "required": true },
+      { "name": "lastActivityDate", "type": "timestamp", "required": true },
+      { "name": "dailyLimit", "type": "number", "required": false },
+      { "name": "monthlyLimit", "type": "number", "required": false }
+    ],
+    "annotations": {
+      "pii": true,
+      "retention": "10years",
+      "encryption": "required",
+      "audit": "required",
+      "compliance": "SOX"
+    }
+  }
+}

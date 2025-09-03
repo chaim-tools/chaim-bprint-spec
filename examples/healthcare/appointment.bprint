@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "v1",
+  "namespace": "healthcare.clinic.appointment",
+  "description": "Patient appointment scheduling and management for healthcare clinics",
+  "entity": {
+    "primaryKey": { 
+      "partitionKey": "appointmentId",
+      "sortKey": "appointmentDate"
+    },
+    "fields": [
+      { "name": "appointmentId", "type": "string", "required": true },
+      { "name": "patientId", "type": "string", "required": true },
+      { "name": "providerId", "type": "string", "required": true },
+      { "name": "appointmentDate", "type": "timestamp", "required": true },
+      { "name": "duration", "type": "number", "required": true },
+      { "name": "type", "type": "string", "enum": ["consultation", "follow_up", "procedure", "emergency"], "required": true },
+      { "name": "status", "type": "string", "enum": ["scheduled", "confirmed", "in_progress", "completed", "cancelled", "no_show"], "required": true },
+      { "name": "notes", "type": "string", "required": false },
+      { "name": "createdAt", "type": "timestamp", "required": true }
+    ],
+    "annotations": {
+      "phi": true,
+      "retention": "7years",
+      "encryption": "required",
+      "audit": "required"
+    }
+  }
+}

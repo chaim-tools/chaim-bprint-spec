@@ -3,70 +3,64 @@
  */
 
 /**
- * Check for duplicate entity names
- * @param {Array} entities - Array of entity objects
- * @returns {Array} Array of duplicate entity names
+ * Find duplicate entity names across all entities
+ * Since each .bprint file now has only one entity, this is simplified
  */
-export const findDuplicateEntityNames = entities => {
-  const entityNames = entities.map(e => e.name);
-  return entityNames.filter(
-    (name, index) => entityNames.indexOf(name) !== index
-  );
-};
-
-/**
- * Check for duplicate field names within an entity
- * @param {Object} entity - Entity object
- * @returns {Array} Array of duplicate field names
- */
-export const findDuplicateFieldNames = entity => {
-  const fieldNames = entity.fields.map(f => f.name);
-  return fieldNames.filter((name, index) => fieldNames.indexOf(name) !== index);
-};
-
-/**
- * Validate custom business rules beyond JSON Schema
- * @param {Object} json - Parsed bprint JSON
- * @returns {Array} Array of validation error messages
- */
-export const validateCustomRules = json => {
+export const findDuplicateEntityNames = (bprint) => {
   const errors = [];
-
-  if (!json.entities || !Array.isArray(json.entities)) {
-    return errors;
-  }
-
-  // Check for duplicate entity names
-  const duplicateEntities = findDuplicateEntityNames(json.entities);
-  if (duplicateEntities.length > 0) {
-    errors.push(`Duplicate entity names: ${duplicateEntities.join(', ')}`);
-  }
-
-  // Check for duplicate field names per entity
-  json.entities.forEach(entity => {
-    if (entity.fields && Array.isArray(entity.fields)) {
-      const duplicateFields = findDuplicateFieldNames(entity);
-      if (duplicateFields.length > 0) {
-        errors.push(
-          `Entity '${entity.name}' has duplicate field names: ${duplicateFields.join(', ')}`
-        );
-      }
-    }
-  });
-
+  
+  // Each .bprint file now has only one entity, so no duplicate checking needed
+  // This function is kept for future extensibility if we ever support multiple entities again
   return errors;
 };
 
 /**
- * Count entities and fields in a bprint file
- * @param {Object} json - Parsed bprint JSON
- * @returns {Object} Counts object
+ * Find duplicate field names within a single entity
  */
-export const countEntitiesAndFields = json => {
-  const entityCount = json.entities?.length || 0;
-  const fieldCount =
-    json.entities?.reduce((sum, e) => sum + (e.fields?.length || 0), 0) || 0;
+export const findDuplicateFieldNames = (entity, entityIndex = 0) => {
+  const errors = [];
+  const fieldNames = {};
+  
+  entity.fields.forEach((field, fieldIndex) => {
+    if (fieldNames[field.name]) {
+      errors.push({
+        message: `Duplicate field name '${field.name}' in entity`,
+        path: `entity.fields[${fieldIndex}]`
+      });
+    } else {
+      fieldNames[field.name] = fieldIndex;
+    }
+  });
+  
+  return errors;
+};
 
+/**
+ * Validate custom business rules beyond JSON Schema
+ */
+export const validateCustomRules = (bprint) => {
+  const errors = [];
+  
+  // Check for duplicate field names within the entity
+  if (bprint.entity && bprint.entity.fields) {
+    errors.push(...findDuplicateFieldNames(bprint.entity));
+  }
+  
+  // Validate field constraints
+  if (bprint.entity) {
+    errors.push(...validateFieldConstraints(bprint.entity));
+  }
+  
+  return errors;
+};
+
+/**
+ * Count total entities and fields for reporting
+ */
+export const countEntitiesAndFields = (bprint) => {
+  const entityCount = bprint.entity ? 1 : 0;
+  const fieldCount = bprint.entity?.fields?.length || 0;
+  
   return { entityCount, fieldCount };
 };
 

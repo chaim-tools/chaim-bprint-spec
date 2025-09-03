@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "v1",
+  "namespace": "healthcare.clinic.patient",
+  "description": "Patient demographic and medical information for healthcare management",
+  "entity": {
+    "primaryKey": { "partitionKey": "patientId" },
+    "fields": [
+      { "name": "patientId", "type": "string", "required": true },
+      { "name": "mrn", "type": "string", "required": true },
+      { "name": "firstName", "type": "string", "required": true },
+      { "name": "lastName", "type": "string", "required": true },
+      { "name": "dateOfBirth", "type": "timestamp", "required": true },
+      { "name": "gender", "type": "string", "enum": ["male", "female", "other", "prefer_not_to_say"], "required": true },
+      { "name": "ssn", "type": "string", "required": false },
+      { "name": "phone", "type": "string", "required": true },
+      { "name": "email", "type": "string", "required": false },
+      { "name": "address", "type": "string", "required": true },
+      { "name": "emergencyContact", "type": "string", "required": true },
+      { "name": "insuranceProvider", "type": "string", "required": false },
+      { "name": "insuranceId", "type": "string", "required": false },
+      { "name": "allergies", "type": "string", "required": false },
+      { "name": "createdAt", "type": "timestamp", "required": true },
+      { "name": "lastUpdated", "type": "timestamp", "required": true }
+    ],
+    "annotations": {
+      "phi": true,
+      "pii": true,
+      "retention": "7years",
+      "encryption": "required",
+      "audit": "required",
+      "compliance": "HIPAA"
+    }
+  }
+}

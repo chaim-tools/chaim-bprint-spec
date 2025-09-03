@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "v1",
+  "namespace": "financial.banking.customer",
+  "description": "Customer profile and KYC information for financial services",
+  "entity": {
+    "primaryKey": { "partitionKey": "customerId" },
+    "fields": [
+      { "name": "customerId", "type": "string", "required": true },
+      { "name": "ssn", "type": "string", "required": true },
+      { "name": "firstName", "type": "string", "required": true },
+      { "name": "lastName", "type": "string", "required": true },
+      { "name": "dateOfBirth", "type": "timestamp", "required": true },
+      { "name": "email", "type": "string", "required": true },
+      { "name": "phone", "type": "string", "required": true },
+      { "name": "address", "type": "string", "required": true },
+      { "name": "kycStatus", "type": "string", "enum": ["pending", "verified", "rejected"], "required": true },
+      { "name": "riskCategory", "type": "string", "enum": ["low", "medium", "high"], "required": false },
+      { "name": "createdAt", "type": "timestamp", "required": true },
+      { "name": "lastUpdated", "type": "timestamp", "required": true }
+    ],
+    "annotations": {
+      "pii": true,
+      "retention": "10years",
+      "encryption": "required",
+      "audit": "required",
+      "compliance": "GDPR"
+    }
+  }
+}
+
