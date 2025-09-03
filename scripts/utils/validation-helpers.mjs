@@ -6,9 +6,9 @@
  * Find duplicate entity names across all entities
  * Since each .bprint file now has only one entity, this is simplified
  */
-export const findDuplicateEntityNames = (bprint) => {
+export const findDuplicateEntityNames = () => {
   const errors = [];
-  
+
   // Each .bprint file now has only one entity, so no duplicate checking needed
   // This function is kept for future extensibility if we ever support multiple entities again
   return errors;
@@ -17,50 +17,52 @@ export const findDuplicateEntityNames = (bprint) => {
 /**
  * Find duplicate field names within a single entity
  */
-export const findDuplicateFieldNames = (entity, entityIndex = 0) => {
+export const findDuplicateFieldNames = entity => {
   const errors = [];
   const fieldNames = {};
-  
+
   entity.fields.forEach((field, fieldIndex) => {
-    if (fieldNames[field.name]) {
+    if (field.name in fieldNames) {
       errors.push({
         message: `Duplicate field name '${field.name}' in entity`,
-        path: `entity.fields[${fieldIndex}]`
+        path: `entity.fields[${fieldIndex}]`,
       });
     } else {
       fieldNames[field.name] = fieldIndex;
     }
   });
-  
+
   return errors;
 };
 
 /**
  * Validate custom business rules beyond JSON Schema
  */
-export const validateCustomRules = (bprint) => {
+export const validateCustomRules = bprint => {
   const errors = [];
-  
+
   // Check for duplicate field names within the entity
   if (bprint.entity && bprint.entity.fields) {
     errors.push(...findDuplicateFieldNames(bprint.entity));
   }
-  
-  // Validate field constraints
-  if (bprint.entity) {
-    errors.push(...validateFieldConstraints(bprint.entity));
+
+  // Validate field constraints for each field
+  if (bprint.entity && bprint.entity.fields) {
+    bprint.entity.fields.forEach(field => {
+      errors.push(...validateFieldConstraints(field));
+    });
   }
-  
+
   return errors;
 };
 
 /**
  * Count total entities and fields for reporting
  */
-export const countEntitiesAndFields = (bprint) => {
+export const countEntitiesAndFields = bprint => {
   const entityCount = bprint.entity ? 1 : 0;
   const fieldCount = bprint.entity?.fields?.length || 0;
-  
+
   return { entityCount, fieldCount };
 };
 

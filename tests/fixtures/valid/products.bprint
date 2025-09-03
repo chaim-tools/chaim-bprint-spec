@@ -1,31 +1,24 @@
 {
   "schemaVersion": "v1",
   "namespace": "acme.products",
-  "metadata": {
-    "owner": "product-team",
-    "description": "Product catalog schema"
-  },
-  "entities": [
-    {
-      "name": "Product",
-      "description": "Product information",
-      "primaryKey": { 
-        "partitionKey": "productId",
-        "sortKey": "categoryId"
-      },
-      "fields": [
-        { "name": "productId", "type": "string", "required": true },
-        { "name": "categoryId", "type": "string", "required": true },
-        { "name": "name", "type": "string", "required": true },
-        { "name": "price", "type": "number", "required": true },
-        { "name": "inStock", "type": "boolean", "required": false },
-        { "name": "tags", "type": "string", "enum": ["electronics", "clothing", "books"], "required": false },
-        { "name": "createdAt", "type": "timestamp", "required": true }
-      ],
-      "annotations": {
-        "pii": false,
-        "retention": "7years"
-      }
+  "description": "Product catalog schema",
+  "entity": {
+    "primaryKey": { 
+      "partitionKey": "productId",
+      "sortKey": "categoryId"
+    },
+    "fields": [
+      { "name": "productId", "type": "string", "required": true },
+      { "name": "categoryId", "type": "string", "required": true },
+      { "name": "name", "type": "string", "required": true },
+      { "name": "price", "type": "number", "required": true },
+      { "name": "inStock", "type": "boolean", "required": false },
+      { "name": "tags", "type": "string", "enum": ["electronics", "clothing", "books"], "required": false },
+      { "name": "createdAt", "type": "timestamp", "required": true }
+    ],
+    "annotations": {
+      "pii": false,
+      "retention": "7years"
     }
-  ]
+  }
 }

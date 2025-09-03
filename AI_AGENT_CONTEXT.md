@@ -10,9 +10,11 @@
 ## 🎯 **Project Overview**
 
 ### **Core Purpose**
+
 The chaim-bprint-spec is a **Blueprint Specification (.bprint)** system that defines a lightweight, versioned schema format for application data structures. It enables code generation, validation, and governance through declarative schema definitions.
 
 ### **Key Value Proposition**
+
 - **Schema-driven development** with JSON Schema validation
 - **Custom business rules** beyond standard JSON validation
 - **CLI tooling** for validation and testing
@@ -22,6 +24,7 @@ The chaim-bprint-spec is a **Blueprint Specification (.bprint)** system that def
 ## 🏗️ **Architecture & Structure**
 
 ### **File Organization**
+
 ```
 chaim-bprint-spec/
 ├── schema/                    # Core schema definitions
@@ -37,6 +40,7 @@ chaim-bprint-spec/
 ```
 
 ### **Technology Stack**
+
 - **Runtime**: Node.js 18+ (ESM modules)
 - **Validation**: Ajv 8.x with custom formats
 - **Testing**: Node.js built-in test runner
@@ -46,15 +50,17 @@ chaim-bprint-spec/
 ## 🔧 **Core Components**
 
 ### **1. Schema System**
+
 - **File**: `schema/bprint.schema.json`
 - **Purpose**: JSON Schema definition for .bprint file validation
-- **Key Features**: 
+- **Key Features**:
   - Required fields validation
   - Field type constraints
   - Custom validation rules
   - Extensible annotations
 
 ### **2. Validation Engine**
+
 - **Files**: `scripts/validate-*.mjs`
 - **Purpose**: CLI tools for schema validation
 - **Capabilities**:
@@ -64,6 +70,7 @@ chaim-bprint-spec/
   - Detailed error reporting
 
 ### **3. Utility Modules**
+
 - **Files**: `scripts/utils/*.mjs`
 - **Purpose**: Reusable validation and schema loading functions
 - **Key Functions**:
@@ -72,6 +79,7 @@ chaim-bprint-spec/
   - Error formatting and reporting
 
 ### **4. Test Infrastructure**
+
 - **Files**: `tests/*.mjs`
 - **Purpose**: Comprehensive testing of validation logic
 - **Coverage**: Unit tests, integration tests, edge cases
@@ -79,21 +87,25 @@ chaim-bprint-spec/
 ## 📋 **Schema Specification**
 
 ### **Core Schema Structure**
+
 ```json
 {
-  "schemaVersion": "string",      // Required: Version identifier
-  "namespace": "string",          // Required: Logical namespace
-  "entities": [                   // Required: Array of entities
+  "schemaVersion": "string", // Required: Version identifier
+  "namespace": "string", // Required: Logical namespace
+  "entities": [
+    // Required: Array of entities
     {
-      "name": "string",           // Required: Entity identifier
-      "primaryKey": {             // Required: Primary key definition
-        "partitionKey": "string"  // Required: Partition key
+      "name": "string", // Required: Entity identifier
+      "primaryKey": {
+        // Required: Primary key definition
+        "partitionKey": "string" // Required: Partition key
       },
-      "fields": [                 // Required: Array of fields
+      "fields": [
+        // Required: Array of fields
         {
-          "name": "string",       // Required: Field identifier
-          "type": "enum",         // Required: Field type
-          "required": "boolean"   // Optional: Field requirement
+          "name": "string", // Required: Field identifier
+          "type": "enum", // Required: Field type
+          "required": "boolean" // Optional: Field requirement
         }
       ]
     }
@@ -102,12 +114,14 @@ chaim-bprint-spec/
 ```
 
 ### **Field Types**
+
 - `string`: Text data (supports enum constraints)
 - `number`: Numeric data
 - `boolean`: True/false values
 - `timestamp`: Date/time data
 
 ### **Validation Rules**
+
 1. **Schema Level**: JSON Schema compliance
 2. **Business Level**: Custom rule enforcement
 3. **Constraint Level**: Field-specific validations
@@ -117,6 +131,7 @@ chaim-bprint-spec/
 ### **For AI Agents Working with Code**
 
 #### **1. Schema Validation**
+
 ```javascript
 // Load and use schema
 import { loadSchema } from './scripts/utils/schema-loader.mjs';
@@ -125,6 +140,7 @@ const isValid = validate(bprintData);
 ```
 
 #### **2. Custom Validation**
+
 ```javascript
 // Apply business rules
 import { validateCustomRules } from './scripts/utils/validation-helpers.mjs';
@@ -132,6 +148,7 @@ const errors = validateCustomRules(bprintData);
 ```
 
 #### **3. File Processing**
+
 ```javascript
 // Validate individual files
 import { validateSingleFile } from './scripts/validate-single.mjs';
@@ -141,18 +158,21 @@ const result = await validateSingleFile('path/to/file.bprint');
 ### **Common AI Agent Tasks**
 
 #### **Schema Analysis**
+
 - Parse .bprint files for structure understanding
 - Validate schema compliance
 - Extract entity and field information
 - Analyze relationships and constraints
 
 #### **Code Generation**
+
 - Generate validation code based on schemas
 - Create test fixtures from schema definitions
 - Produce documentation from schema metadata
 - Generate client libraries for different languages
 
 #### **Quality Assurance**
+
 - Validate .bprint files in CI/CD pipelines
 - Check schema consistency across projects
 - Enforce naming conventions and patterns
@@ -161,63 +181,70 @@ const result = await validateSingleFile('path/to/file.bprint');
 ## 🔍 **Key Functions & APIs**
 
 ### **Schema Loading**
+
 ```javascript
 // Primary function for AI agents
 export const loadSchema = async (schemaPath = 'schema/bprint.schema.json') => {
   // Returns compiled validation function
   // Handles caching and error handling
-}
+};
 ```
 
 ### **Custom Validation**
+
 ```javascript
 // Business rule enforcement
-export const validateCustomRules = (json) => {
+export const validateCustomRules = json => {
   // Returns array of validation errors
   // Checks duplicates, constraints, etc.
-}
+};
 ```
 
 ### **File Validation**
+
 ```javascript
 // Single file validation with detailed results
-export const validateSingleFile = async (filePath) => {
+export const validateSingleFile = async filePath => {
   // Returns validation result object
   // Includes errors, counts, metadata
-}
+};
 ```
 
 ## 📊 **Data Models**
 
 ### **Validation Result Structure**
+
 ```typescript
 interface ValidationResult {
-  file: string;           // File path
-  valid: boolean;         // Validation success
-  errors: Error[];        // Array of validation errors
-  entityCount: number;    // Number of entities
-  fieldCount: number;     // Number of fields
+  file: string; // File path
+  valid: boolean; // Validation success
+  errors: Error[]; // Array of validation errors
+  entityCount: number; // Number of entities
+  fieldCount: number; // Number of fields
   schemaInfo?: SchemaInfo; // Schema metadata
 }
 ```
 
 ### **Error Structure**
+
 ```typescript
 interface ValidationError {
-  message: string;        // Human-readable error
-  instancePath?: string;  // JSON path to error
-  keyword?: string;       // Validation keyword
+  message: string; // Human-readable error
+  instancePath?: string; // JSON path to error
+  keyword?: string; // Validation keyword
 }
 ```
 
 ## 🧪 **Testing & Validation**
 
 ### **Test Fixtures Available**
+
 - **Valid Examples**: `tests/fixtures/valid/*.bprint`
 - **Invalid Examples**: `tests/fixtures/invalid/*.bprint`
 - **Integration Tests**: `tests/integration/*.mjs`
 
 ### **Test Commands**
+
 ```bash
 npm test                    # Run all tests
 npm run test:unit          # Unit tests only
@@ -227,7 +254,9 @@ npm run test:integration   # Integration tests only
 ## 🔧 **Configuration Options**
 
 ### **Validation Configuration**
+
 File: `config/validation.json`
+
 ```json
 {
   "strictMode": false,
@@ -240,6 +269,7 @@ File: `config/validation.json`
 ```
 
 ### **Code Quality Configuration**
+
 - **ESLint**: `eslint.config.js` (ESLint v9 flat config)
 - **Prettier**: `.prettierrc` (code formatting rules)
 - **Editor**: `.editorconfig` (editor consistency)
@@ -249,16 +279,19 @@ File: `config/validation.json`
 ### **For AI Agents**
 
 #### **1. Schema Loading Failures**
+
 - **Cause**: Missing or malformed schema file
 - **Solution**: Check file path and JSON syntax
 - **Code**: Use try-catch around `loadSchema()`
 
 #### **2. Validation Errors**
+
 - **Cause**: Schema violations or business rule failures
 - **Solution**: Check error messages and fix violations
 - **Code**: Parse `ValidationResult.errors` array
 
 #### **3. Performance Issues**
+
 - **Cause**: Large schemas or many files
 - **Solution**: Schema is cached after first load
 - **Code**: Reuse `loadSchema()` result
@@ -266,6 +299,7 @@ File: `config/validation.json`
 ## 🔮 **Future Extensibility**
 
 ### **Planned Features**
+
 - Schema version migration tools
 - IDE extensions and plugins
 - Code generation for multiple languages
@@ -273,6 +307,7 @@ File: `config/validation.json`
 - Schema registry and management
 
 ### **Extension Points**
+
 - Custom validation rules in `validation-helpers.mjs`
 - New field types in schema definition
 - Additional CLI commands in `scripts/`
