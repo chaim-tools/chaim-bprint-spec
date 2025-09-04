@@ -1,13 +1,18 @@
 {
-  "name": "chaim-bprint-spec",
+  "name": "@chaim/chaim-bprint-spec",
   "version": "0.1.0",
-  "private": true,
-  "description": "Blueprint (.bprint) schema specification for Chaim: JSON Schema, examples, validation scripts, and tests.",
-  "type": "module",
-  "engines": {
-    "node": ">=18"
-  },
+  "description": "Chaim Blueprint (.bprint) schema specification and TypeScript types",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "private": false,
+  "type": "commonjs",
+  "files": [
+    "dist",
+    "schema"
+  ],
   "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
     "lint": "eslint --max-warnings=0 .",
     "validate:examples": "node scripts/validate-examples.mjs",
     "validate:single": "node scripts/validate-single.mjs",
@@ -15,10 +20,21 @@
     "test:unit": "node --test tests/unit/",
     "test:integration": "node --test tests/integration/",
     "format": "prettier -w .",
-    "check": "prettier -c . && eslint . && npm run validate:examples && npm test",
-    "validate:all": "npm run validate:examples && npm run validate:single examples/orders.bprint"
+    "check": "prettier -c . && eslint . && npm run validate:examples && npm test"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./schema": "./schema/bprint.schema.json"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "eslint": "^9.9.0",
