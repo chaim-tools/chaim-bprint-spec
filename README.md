@@ -34,7 +34,7 @@ npm install @chaim/chaim-bprint-spec
 ```typescript
 import { SchemaData, Entity, PrimaryKey, Field } from '@chaim/chaim-bprint-spec';
 
-const schema: SchemaData = {
+const userSchema: SchemaData = {
   schemaVersion: "v1",
   namespace: "acme.users",
   description: "User account information",
@@ -47,6 +47,16 @@ const schema: SchemaData = {
         name: "userId",
         type: "string",
         required: true
+      },
+      {
+        name: "email",
+        type: "string",
+        required: true
+      },
+      {
+        name: "isActive",
+        type: "boolean",
+        default: true
       }
     ]
   }
@@ -59,20 +69,11 @@ const schema: SchemaData = {
 import { validateSchema } from '@chaim/chaim-bprint-spec';
 
 try {
-  const validatedSchema = validateSchema(rawSchema);
-  console.log('Schema is valid:', validatedSchema);
+  const validatedUserSchema = validateSchema(userSchema);
+  console.log('User schema is valid:', validatedUserSchema);
 } catch (error) {
   console.error('Schema validation failed:', error.message);
 }
-```
-
-### JSON Schema Access
-
-```typescript
-import schema from '@chaim/chaim-bprint-spec/schema';
-
-// Use the JSON schema for custom validation
-console.log('Schema version:', schema.$schema);
 ```
 
 ## Schema Format
@@ -82,14 +83,14 @@ console.log('Schema version:', schema.$schema);
 ```json
 {
   "schemaVersion": "v1",
-  "namespace": "acme.orders",
-  "description": "Basic order management system",
+  "namespace": "acme.users",
+  "description": "User account information",
   "entity": {
-    "primaryKey": { "partitionKey": "orderId" },
+    "primaryKey": { "partitionKey": "userId" },
     "fields": [
-      { "name": "orderId", "type": "string", "required": true },
-      { "name": "customerId", "type": "string", "required": true },
-      { "name": "amount", "type": "number", "required": true }
+      { "name": "userId", "type": "string", "required": true },
+      { "name": "email", "type": "string", "required": true },
+      { "name": "isActive", "type": "boolean", "default": true }
     ]
   }
 }
@@ -100,12 +101,12 @@ console.log('Schema version:', schema.$schema);
 ```json
 {
   "schemaVersion": "v1",
-  "namespace": "ecommerce.store.customer",
-  "description": "Customer account information and profile data",
+  "namespace": "acme.users",
+  "description": "User account information with privacy controls",
   "entity": {
-    "primaryKey": { "partitionKey": "customerId" },
+    "primaryKey": { "partitionKey": "userId" },
     "fields": [
-      { "name": "customerId", "type": "string", "required": true },
+      { "name": "userId", "type": "string", "required": true },
       { "name": "email", "type": "string", "required": true },
       {
         "name": "membershipTier",

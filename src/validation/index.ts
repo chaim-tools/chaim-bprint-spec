@@ -82,6 +82,14 @@ function validateFields(fields: any[]): Field[] {
       throw new Error(`Field '${field.name}' enum must be a non-empty array`);
     }
 
+    // Validate default value type matches field type
+    if (field.default !== undefined) {
+      const isValidDefault = validateDefaultValue(field.default, field.type);
+      if (!isValidDefault) {
+        throw new Error(`Field '${field.name}' default value type does not match field type`);
+      }
+    }
+
     validatedFields.push({
       name: field.name,
       type: field.type,
@@ -94,4 +102,22 @@ function validateFields(fields: any[]): Field[] {
   }
 
   return validatedFields;
+}
+
+/**
+ * Validates that default value type matches field type
+ */
+function validateDefaultValue(defaultValue: any, fieldType: string): boolean {
+  switch (fieldType) {
+    case 'string':
+      return typeof defaultValue === 'string';
+    case 'number':
+      return typeof defaultValue === 'number';
+    case 'boolean':
+      return typeof defaultValue === 'boolean';
+    case 'timestamp':
+      return typeof defaultValue === 'string';
+    default:
+      return false;
+  }
 }
