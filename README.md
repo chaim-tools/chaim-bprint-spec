@@ -32,34 +32,39 @@ npm install @chaim/chaim-bprint-spec
 ### TypeScript Types
 
 ```typescript
-import { SchemaData, Entity, PrimaryKey, Field } from '@chaim/chaim-bprint-spec';
+import {
+  SchemaData,
+  Entity,
+  PrimaryKey,
+  Field,
+} from '@chaim/chaim-bprint-spec';
 
 const userSchema: SchemaData = {
-  schemaVersion: "v1",
-  namespace: "acme.users",
-  description: "User account information",
+  schemaVersion: 'v1',
+  namespace: 'acme.users',
+  description: 'User account information',
   entity: {
     primaryKey: {
-      partitionKey: "userId"
+      partitionKey: 'userId',
     },
     fields: [
       {
-        name: "userId",
-        type: "string",
-        required: true
+        name: 'userId',
+        type: 'string',
+        required: true,
       },
       {
-        name: "email",
-        type: "string",
-        required: true
+        name: 'email',
+        type: 'string',
+        required: true,
       },
       {
-        name: "isActive",
-        type: "boolean",
-        default: true
-      }
-    ]
-  }
+        name: 'isActive',
+        type: 'boolean',
+        default: true,
+      },
+    ],
+  },
 };
 ```
 
@@ -222,4 +227,3 @@ The `.bprint` files are designed for seamless CDK integration:
 ## License
 
 Apache-2.0 - see [LICENSE](LICENSE) for details.
-

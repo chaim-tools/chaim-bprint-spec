@@ -1,5 +1,5 @@
 {
-  "name": "@chaim/chaim-bprint-spec",
+  "name": "@chaim-tools/chaim-bprint-spec",
   "version": "0.1.0",
   "description": "Chaim Blueprint (.bprint) schema specification and TypeScript types",
   "main": "dist/index.js",
@@ -8,16 +8,18 @@
   "type": "commonjs",
   "files": [
     "dist",
-    "schema"
+    "schema",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc",
+    "clean": "rm -rf dist",
     "prepare": "npm run build",
     "lint": "eslint --max-warnings=0 .",
     "validate:examples": "node scripts/validate-examples.mjs",
     "validate:single": "node scripts/validate-single.mjs",
     "test": "node --test tests/spec.test.mjs",
-    "test:unit": "node --test tests/unit/",
     "test:integration": "node --test tests/integration/",
     "format": "prettier -w .",
     "check": "prettier -c . && eslint . && npm run validate:examples && npm test"
@@ -32,6 +34,24 @@
   "engines": {
     "node": ">=18"
   },
+  "keywords": [
+    "chaim",
+    "bprint",
+    "schema",
+    "typescript",
+    "validation",
+    "ddb"
+  ],
+  "author": "Chaim Builder",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chaim-builder/chaim-bprint-spec.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chaim-builder/chaim-bprint-spec/issues"
+  },
+  "homepage": "https://github.com/chaim-builder/chaim-bprint-spec#readme",
   "devDependencies": {
     "typescript": "^5.0.0",
     "@types/node": "^20.0.0",

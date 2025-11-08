@@ -5,6 +5,9 @@ export default [
   js.configs.recommended,
   prettier,
   {
+    ignores: ['node_modules/**', 'dist/**', '**/*.min.js'],
+  },
+  {
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -28,6 +31,5 @@ export default [
       'object-shorthand': 'error',
       'prefer-template': 'error',
     },
-    ignores: ['node_modules/', 'dist/', '*.min.js'],
   },
 ];

@@ -67,8 +67,13 @@ function validateFields(fields: any[]): Field[] {
     if (!field.name || typeof field.name !== 'string') {
       throw new Error('Field must include name as a string');
     }
-    if (!field.type || !['string', 'number', 'boolean', 'timestamp'].includes(field.type)) {
-      throw new Error(`Field '${field.name}' must have a valid type: string, number, boolean, or timestamp`);
+    if (
+      !field.type ||
+      !['string', 'number', 'boolean', 'timestamp'].includes(field.type)
+    ) {
+      throw new Error(
+        `Field '${field.name}' must have a valid type: string, number, boolean, or timestamp`
+      );
     }
 
     // Check for duplicate field names
@@ -86,7 +91,9 @@ function validateFields(fields: any[]): Field[] {
     if (field.default !== undefined) {
       const isValidDefault = validateDefaultValue(field.default, field.type);
       if (!isValidDefault) {
-        throw new Error(`Field '${field.name}' default value type does not match field type`);
+        throw new Error(
+          `Field '${field.name}' default value type does not match field type`
+        );
       }
     }
 
