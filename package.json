@@ -42,16 +42,16 @@
     "validation",
     "ddb"
   ],
-  "author": "Chaim Builder",
+  "author": "Chaim Tools",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/chaim-builder/chaim-bprint-spec.git"
+    "url": "https://github.com/chaim-tools/chaim-bprint-spec.git"
   },
   "bugs": {
-    "url": "https://github.com/chaim-builder/chaim-bprint-spec/issues"
+    "url": "https://github.com/chaim-tools/chaim-bprint-spec/issues"
   },
-  "homepage": "https://github.com/chaim-builder/chaim-bprint-spec#readme",
+  "homepage": "https://github.com/chaim-tools/chaim-bprint-spec#readme",
   "devDependencies": {
     "typescript": "^5.0.0",
     "@types/node": "^20.0.0",
