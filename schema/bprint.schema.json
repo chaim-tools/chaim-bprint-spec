@@ -39,11 +39,6 @@
           "items": {
             "$ref": "#/$defs/field"
           }
-        },
-        "annotations": {
-          "type": "object",
-          "description": "Extensible map for future annotations (e.g., pii, retention).",
-          "additionalProperties": true
         }
       }
     },
@@ -92,9 +87,38 @@
         "description": {
           "type": "string"
         },
+        "constraints": {
+          "type": "object",
+          "description": "Validation constraints for the field value",
+          "additionalProperties": false,
+          "properties": {
+            "minLength": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Minimum string length (applies to string type)"
+            },
+            "maxLength": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Maximum string length (applies to string type)"
+            },
+            "pattern": {
+              "type": "string",
+              "description": "Regex pattern for validation (applies to string type)"
+            },
+            "min": {
+              "type": "number",
+              "description": "Minimum value (applies to number type)"
+            },
+            "max": {
+              "type": "number",
+              "description": "Maximum value (applies to number type)"
+            }
+          }
+        },
         "annotations": {
           "type": "object",
-          "description": "Future-proof annotations (privacy, security, etc.).",
+          "description": "Extensible metadata annotations for the field",
           "additionalProperties": true
         }
       }

@@ -15,11 +15,6 @@
       { "name": "billingAddress", "type": "string", "required": true },
       { "name": "paymentMethod", "type": "string", "enum": ["credit_card", "debit_card", "paypal", "apple_pay"], "required": true },
       { "name": "notes", "type": "string", "required": false }
-    ],
-    "annotations": {
-      "pii": true,
-      "retention": "7years",
-      "audit": "required"
-    }
+    ]
   }
 }

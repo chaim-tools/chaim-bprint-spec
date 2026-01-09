@@ -56,7 +56,7 @@ test('Schema Validation', async t => {
   await t.test('custom validation rules work correctly', async () => {
     // Test duplicate field names
     const duplicateFields = await loadFixture(
-      'tests/fixtures/invalid/duplicate-entity-names.bprint'
+      'tests/fixtures/invalid/duplicate-field-names.bprint'
     );
 
     const errors = validateCustomRules(duplicateFields);
@@ -258,24 +258,20 @@ test('Advanced Validation', async t => {
             name: 'id',
             type: 'string',
             required: true,
-            annotations: { pii: false, retention: '1year' },
+            annotations: { customTag: 'primary' },
           },
           {
             name: 'email',
             type: 'string',
             required: true,
-            annotations: { pii: true, encryption: 'required' },
+            annotations: { source: 'registration' },
           },
         ],
-        annotations: {
-          compliance: 'GDPR',
-          audit: true,
-        },
       },
     };
 
     const ok = validate(annotatedSchema);
-    assert.equal(ok, true, 'Schema with annotations should be valid');
+    assert.equal(ok, true, 'Schema with custom annotations should be valid');
   });
 });
 
@@ -557,11 +553,11 @@ test('Performance & Stress Testing', async t => {
   await t.test('handles complex nested structures', async () => {
     const validate = await loadSchema();
 
-    // Create schema with complex annotations
+    // Create schema with complex field annotations
     const complexSchema = {
       schemaVersion: 'v1',
       namespace: 'test.complex',
-      description: 'Complex schema with nested annotations',
+      description: 'Complex schema with custom field annotations',
       entity: {
         primaryKey: { partitionKey: 'id' },
         fields: [
@@ -570,14 +566,7 @@ test('Performance & Stress Testing', async t => {
             type: 'string',
             required: true,
             annotations: {
-              pii: false,
-              retention: '7years',
-              encryption: 'none',
-              compliance: {
-                gdpr: true,
-                sox: false,
-                hipaa: false,
-              },
+              customFlag: true,
             },
           },
           {
@@ -585,34 +574,476 @@ test('Performance & Stress Testing', async t => {
             type: 'string',
             required: false,
             annotations: {
-              pii: true,
-              retention: '1year',
-              encryption: 'required',
-              compliance: {
-                gdpr: true,
-                sox: true,
-                hipaa: false,
-              },
+              source: 'user-input',
             },
           },
         ],
-        annotations: {
-          table: {
-            billing: 'on-demand',
-            backup: true,
-            encryption: 'at-rest',
-          },
-          tags: {
-            environment: 'production',
-            team: 'data-engineering',
-            'cost-center': 'cc-123',
-          },
-        },
       },
     };
 
     const ok = validate(complexSchema);
-    assert.equal(ok, true, 'Complex nested schema should be valid');
+    assert.equal(ok, true, 'Complex field annotations schema should be valid');
+  });
+});
+
+// Test suite for field constraints
+test('Field Constraints', async t => {
+  // Import the TypeScript validation function for constraint testing
+  const { validateSchema } = await import('../dist/index.js');
+
+  await t.test('valid string constraints are accepted', async () => {
+    const schemaWithStringConstraints = {
+      schemaVersion: 'v1',
+      namespace: 'test.constraints',
+      description: 'Schema with string constraints',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'stateCode',
+            type: 'string',
+            required: true,
+            constraints: {
+              minLength: 2,
+              maxLength: 2,
+              pattern: '^[A-Z]{2}$',
+            },
+          },
+          {
+            name: 'zipCode',
+            type: 'string',
+            required: false,
+            constraints: {
+              minLength: 5,
+              maxLength: 10,
+              pattern: '^[0-9]{5}(-[0-9]{4})?$',
+            },
+          },
+        ],
+      },
+    };
+
+    // Should not throw
+    const validated = validateSchema(schemaWithStringConstraints);
+    assert.ok(validated, 'Schema with valid string constraints should pass');
+    assert.equal(validated.entity.fields[1].constraints.minLength, 2);
+    assert.equal(validated.entity.fields[1].constraints.maxLength, 2);
+  });
+
+  await t.test('valid number constraints are accepted', async () => {
+    const schemaWithNumberConstraints = {
+      schemaVersion: 'v1',
+      namespace: 'test.constraints',
+      description: 'Schema with number constraints',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'quantity',
+            type: 'number',
+            required: true,
+            constraints: {
+              min: 1,
+              max: 1000,
+            },
+          },
+          {
+            name: 'price',
+            type: 'number',
+            required: true,
+            constraints: {
+              min: 0,
+              max: 999999.99,
+            },
+          },
+        ],
+      },
+    };
+
+    const validated = validateSchema(schemaWithNumberConstraints);
+    assert.ok(validated, 'Schema with valid number constraints should pass');
+    assert.equal(validated.entity.fields[1].constraints.min, 1);
+    assert.equal(validated.entity.fields[1].constraints.max, 1000);
+  });
+
+  await t.test('string constraints on non-string field are rejected', async () => {
+    const invalidSchema = {
+      schemaVersion: 'v1',
+      namespace: 'test.constraints',
+      description: 'Invalid: string constraints on number field',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'count',
+            type: 'number',
+            required: true,
+            constraints: {
+              minLength: 5, // Invalid: minLength on number field
+            },
+          },
+        ],
+      },
+    };
+
+    assert.throws(
+      () => validateSchema(invalidSchema),
+      /minLength constraint but is not a string type/,
+      'Should reject minLength on non-string field'
+    );
+  });
+
+  await t.test('maxLength constraint on non-string field is rejected', async () => {
+    const invalidSchema = {
+      schemaVersion: 'v1',
+      namespace: 'test.constraints',
+      description: 'Invalid: maxLength on boolean field',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'isActive',
+            type: 'boolean',
+            constraints: {
+              maxLength: 10, // Invalid: maxLength on boolean field
+            },
+          },
+        ],
+      },
+    };
+
+    assert.throws(
+      () => validateSchema(invalidSchema),
+      /maxLength constraint but is not a string type/,
+      'Should reject maxLength on non-string field'
+    );
+  });
+
+  await t.test('pattern constraint on non-string field is rejected', async () => {
+    const invalidSchema = {
+      schemaVersion: 'v1',
+      namespace: 'test.constraints',
+      description: 'Invalid: pattern on timestamp field',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'createdAt',
+            type: 'timestamp',
+            constraints: {
+              pattern: '^[0-9]+$', // Invalid: pattern on timestamp field
+            },
+          },
+        ],
+      },
+    };
+
+    assert.throws(
+      () => validateSchema(invalidSchema),
+      /pattern constraint but is not a string type/,
+      'Should reject pattern on non-string field'
+    );
+  });
+
+  await t.test('number constraints on non-number field are rejected', async () => {
+    const invalidSchema = {
+      schemaVersion: 'v1',
+      namespace: 'test.constraints',
+      description: 'Invalid: min/max on string field',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'name',
+            type: 'string',
+            constraints: {
+              min: 0, // Invalid: min on string field
+            },
+          },
+        ],
+      },
+    };
+
+    assert.throws(
+      () => validateSchema(invalidSchema),
+      /min constraint but is not a number type/,
+      'Should reject min on non-number field'
+    );
+  });
+
+  await t.test('max constraint on non-number field is rejected', async () => {
+    const invalidSchema = {
+      schemaVersion: 'v1',
+      namespace: 'test.constraints',
+      description: 'Invalid: max on boolean field',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'flag',
+            type: 'boolean',
+            constraints: {
+              max: 100, // Invalid: max on boolean field
+            },
+          },
+        ],
+      },
+    };
+
+    assert.throws(
+      () => validateSchema(invalidSchema),
+      /max constraint but is not a number type/,
+      'Should reject max on non-number field'
+    );
+  });
+
+  await t.test('minLength greater than maxLength is rejected', async () => {
+    const invalidSchema = {
+      schemaVersion: 'v1',
+      namespace: 'test.constraints',
+      description: 'Invalid: minLength > maxLength',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'code',
+            type: 'string',
+            constraints: {
+              minLength: 10,
+              maxLength: 5, // Invalid: min > max
+            },
+          },
+        ],
+      },
+    };
+
+    assert.throws(
+      () => validateSchema(invalidSchema),
+      /minLength.*cannot be greater than maxLength/,
+      'Should reject minLength > maxLength'
+    );
+  });
+
+  await t.test('min greater than max is rejected', async () => {
+    const invalidSchema = {
+      schemaVersion: 'v1',
+      namespace: 'test.constraints',
+      description: 'Invalid: min > max',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'quantity',
+            type: 'number',
+            constraints: {
+              min: 100,
+              max: 10, // Invalid: min > max
+            },
+          },
+        ],
+      },
+    };
+
+    assert.throws(
+      () => validateSchema(invalidSchema),
+      /min.*cannot be greater than max/,
+      'Should reject min > max'
+    );
+  });
+
+  await t.test('invalid regex pattern is rejected', async () => {
+    const invalidSchema = {
+      schemaVersion: 'v1',
+      namespace: 'test.constraints',
+      description: 'Invalid: bad regex pattern',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'code',
+            type: 'string',
+            constraints: {
+              pattern: '[invalid(regex', // Invalid regex
+            },
+          },
+        ],
+      },
+    };
+
+    assert.throws(
+      () => validateSchema(invalidSchema),
+      /pattern is not a valid regular expression/,
+      'Should reject invalid regex pattern'
+    );
+  });
+
+  await t.test('negative minLength is rejected', async () => {
+    const invalidSchema = {
+      schemaVersion: 'v1',
+      namespace: 'test.constraints',
+      description: 'Invalid: negative minLength',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'code',
+            type: 'string',
+            constraints: {
+              minLength: -1, // Invalid: negative
+            },
+          },
+        ],
+      },
+    };
+
+    assert.throws(
+      () => validateSchema(invalidSchema),
+      /minLength must be a non-negative integer/,
+      'Should reject negative minLength'
+    );
+  });
+
+  await t.test('non-integer minLength is rejected', async () => {
+    const invalidSchema = {
+      schemaVersion: 'v1',
+      namespace: 'test.constraints',
+      description: 'Invalid: non-integer minLength',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'code',
+            type: 'string',
+            constraints: {
+              minLength: 2.5, // Invalid: not an integer
+            },
+          },
+        ],
+      },
+    };
+
+    assert.throws(
+      () => validateSchema(invalidSchema),
+      /minLength must be a non-negative integer/,
+      'Should reject non-integer minLength'
+    );
+  });
+
+  await t.test('custom annotations are preserved', async () => {
+    const validSchema = {
+      schemaVersion: 'v1',
+      namespace: 'test.metadata',
+      description: 'Schema with custom annotations',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'email',
+            type: 'string',
+            annotations: {
+              customFlag: true,
+              source: 'user-input',
+            },
+          },
+        ],
+      },
+    };
+
+    const validated = validateSchema(validSchema);
+    assert.ok(validated, 'Schema with custom annotations should pass');
+    assert.equal(validated.entity.fields[1].annotations.customFlag, true);
+    assert.equal(validated.entity.fields[1].annotations.source, 'user-input');
+  });
+
+  await t.test('combined constraints and annotations work', async () => {
+    const validSchema = {
+      schemaVersion: 'v1',
+      namespace: 'test.combined',
+      description: 'Schema with combined constraints and annotations',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'ssn',
+            type: 'string',
+            required: true,
+            constraints: {
+              minLength: 9,
+              maxLength: 11,
+              pattern: '^[0-9]{3}-?[0-9]{2}-?[0-9]{4}$',
+            },
+          },
+          {
+            name: 'email',
+            type: 'string',
+            required: true,
+            constraints: {
+              minLength: 5,
+              maxLength: 254,
+            },
+            annotations: {
+              source: 'registration-form',
+            },
+          },
+          {
+            name: 'age',
+            type: 'number',
+            required: false,
+            constraints: {
+              min: 0,
+              max: 150,
+            },
+          },
+        ],
+      },
+    };
+
+    const validated = validateSchema(validSchema);
+    assert.ok(validated, 'Schema with combined constraints and annotations should pass');
+    
+    const ssnField = validated.entity.fields[1];
+    assert.equal(ssnField.constraints.minLength, 9);
+    
+    const emailField = validated.entity.fields[2];
+    assert.equal(emailField.constraints.minLength, 5);
+    assert.equal(emailField.annotations.source, 'registration-form');
+    
+    const ageField = validated.entity.fields[3];
+    assert.equal(ageField.constraints.min, 0);
+    assert.equal(ageField.constraints.max, 150);
+  });
+
+  await t.test('schema without constraints still validates', async () => {
+    const simpleSchema = {
+      schemaVersion: 'v1',
+      namespace: 'test.simple',
+      description: 'Simple schema without constraints',
+      entity: {
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          { name: 'name', type: 'string', required: true },
+          { name: 'count', type: 'number', required: false },
+        ],
+      },
+    };
+
+    const validated = validateSchema(simpleSchema);
+    assert.ok(validated, 'Schema without constraints should pass');
   });
 });
 

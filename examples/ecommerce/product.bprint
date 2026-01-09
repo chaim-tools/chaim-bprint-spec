@@ -17,11 +17,6 @@
       { "name": "isActive", "type": "boolean", "required": false, "default": true },
       { "name": "createdAt", "type": "timestamp", "required": true },
       { "name": "updatedAt", "type": "timestamp", "required": true }
-    ],
-    "annotations": {
-      "pii": false,
-      "retention": "10years",
-      "searchable": true
-    }
+    ]
   }
 }

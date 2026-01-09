@@ -15,10 +15,6 @@
       { "name": "inStock", "type": "boolean", "required": false },
       { "name": "tags", "type": "string", "enum": ["electronics", "clothing", "books"], "required": false },
       { "name": "createdAt", "type": "timestamp", "required": true }
-    ],
-    "annotations": {
-      "pii": false,
-      "retention": "7years"
-    }
+    ]
   }
 }

@@ -5,7 +5,7 @@ A lightweight, versioned schema format for defining application data structures 
 
 ## Overview
 
-The **Blueprint Spec** (`.bprint`) is the foundation of Chaim's open-source developer tools.  
+The **Blueprint Spec** (`.bprint`) is the foundation of Chaim's developer tools.  
 It provides a declarative way to define data schemas that can be:
 
 - Translated into **strongly typed POJOs/DTOs** (Java today; Python/Node.js later)
@@ -19,12 +19,12 @@ It provides a declarative way to define data schemas that can be:
 - **Developer-first** (simple, readable)
 - **Shift-left** (great in CI/CD + IaC)
 - **Extensible** (room for privacy/security annotations later)
-- **CDK-ready** (clean 1:1 mapping to DynamoDB tables)
+- **CDK-ready** (supports single-table design with DynamoDB)
 
 ## Installation
 
 ```bash
-npm install @chaim/chaim-bprint-spec
+npm install @chaim-tools/chaim-bprint-spec
 ```
 
 ## Usage
@@ -37,7 +37,7 @@ import {
   Entity,
   PrimaryKey,
   Field,
-} from '@chaim/chaim-bprint-spec';
+} from '@chaim-tools/chaim-bprint-spec';
 
 const userSchema: SchemaData = {
   schemaVersion: 'v1',
@@ -71,7 +71,7 @@ const userSchema: SchemaData = {
 ### Schema Validation
 
 ```typescript
-import { validateSchema } from '@chaim/chaim-bprint-spec';
+import { validateSchema } from '@chaim-tools/chaim-bprint-spec';
 
 try {
   const validatedUserSchema = validateSchema(userSchema);
@@ -101,31 +101,40 @@ try {
 }
 ```
 
-### Advanced Example with Annotations
+### Advanced Example with Constraints
 
 ```json
 {
   "schemaVersion": "v1",
   "namespace": "acme.users",
-  "description": "User account information with privacy controls",
+  "description": "User account information with field constraints",
   "entity": {
     "primaryKey": { "partitionKey": "userId" },
     "fields": [
       { "name": "userId", "type": "string", "required": true },
-      { "name": "email", "type": "string", "required": true },
+      {
+        "name": "email",
+        "type": "string",
+        "required": true,
+        "constraints": {
+          "minLength": 5,
+          "maxLength": 254,
+          "pattern": "^[^@]+@[^@]+\\.[^@]+$"
+        }
+      },
       {
         "name": "membershipTier",
         "type": "string",
         "enum": ["bronze", "silver", "gold", "platinum"]
       },
+      {
+        "name": "age",
+        "type": "number",
+        "constraints": { "min": 0, "max": 150 }
+      },
       { "name": "isActive", "type": "boolean", "default": true },
       { "name": "createdAt", "type": "timestamp", "required": true }
-    ],
-    "annotations": {
-      "pii": true,
-      "retention": "7years",
-      "encryption": "required"
-    }
+    ]
   }
 }
 ```
@@ -155,25 +164,9 @@ try {
 ### Advanced Features
 
 - **Sort Keys**: Optional `sortKey` in primaryKey for composite keys
-- **Annotations**: Extensible annotations for entities and fields
+- **Constraints**: Validation constraints for fields (`minLength`, `maxLength`, `pattern`, `min`, `max`)
+- **Annotations**: Extensible custom metadata for fields
 - **Descriptions**: Human-readable descriptions for entities and fields
-
-## Repository Structure
-
-```
-chaim-bprint-spec/
-├── src/                           # TypeScript source code
-│   ├── index.ts                   # Main exports
-│   ├── types/                     # TypeScript interfaces
-│   └── validation/                # Validation functions
-├── dist/                          # Built files (generated)
-├── schema/
-│   └── bprint.schema.json         # JSON Schema for validation
-├── examples/                       # Sample .bprint files by industry
-├── scripts/                        # Validation utilities
-├── tests/                          # Test suite
-└── config/                         # Configuration files
-```
 
 ## Examples
 
@@ -208,12 +201,30 @@ npm run lint           # Lint code
 
 ## CDK Integration
 
-The `.bprint` files are designed for seamless CDK integration:
+The `.bprint` files are designed for seamless CDK integration via the `ChaimBinder` construct:
 
-- **1:1 Table Mapping**: Each `.bprint` file maps to one DynamoDB table
-- **Clean Naming**: Namespace-based table naming conventions
-- **Automatic Keys**: Primary key configuration from schema
-- **Infrastructure**: Database configuration managed in CDK
+- **Entity Schema Binding**: Each `.bprint` describes an entity type that can be stored in a DynamoDB table
+- **Single-Table Design**: Multiple `.bprint` schemas can bind to the same table (NoSQL best practice)
+- **Schema Metadata**: `ChaimBinder` associates schema definitions with existing tables for validation and governance
+- **Namespace Organization**: Use namespaces to logically group related entity schemas
+
+```typescript
+import { ChaimBinder } from '@chaim-tools/cdk-lib';
+
+// Create one DynamoDB table
+const dataTable = new dynamodb.Table(this, 'DataTable', { ... });
+
+// Bind multiple entity schemas to the same table
+new ChaimBinder(this, 'UserSchema', {
+  schemaPath: './schemas/user.bprint',
+  table: dataTable,
+});
+
+new ChaimBinder(this, 'OrderSchema', {
+  schemaPath: './schemas/order.bprint',
+  table: dataTable,  // Same table, different entity type
+});
+```
 
 ## Contributing
 

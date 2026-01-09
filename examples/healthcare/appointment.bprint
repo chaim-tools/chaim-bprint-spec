@@ -17,12 +17,6 @@
       { "name": "status", "type": "string", "enum": ["scheduled", "confirmed", "in_progress", "completed", "cancelled", "no_show"], "required": true },
       { "name": "notes", "type": "string", "required": false },
       { "name": "createdAt", "type": "timestamp", "required": true }
-    ],
-    "annotations": {
-      "phi": true,
-      "retention": "7years",
-      "encryption": "required",
-      "audit": "required"
-    }
+    ]
   }
 }

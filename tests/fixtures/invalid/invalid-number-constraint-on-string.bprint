@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "v1",
+  "namespace": "test.invalid",
+  "description": "Invalid: min constraint on string field",
+  "entity": {
+    "primaryKey": { "partitionKey": "id" },
+    "fields": [
+      {
+        "name": "id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "constraints": {
+          "min": 0,
+          "max": 100
+        }
+      }
+    ]
+  }
+}
+

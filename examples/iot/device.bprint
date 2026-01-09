@@ -17,13 +17,7 @@
       { "name": "lastSeen", "type": "timestamp", "required": true },
       { "name": "createdAt", "type": "timestamp", "required": true },
       { "name": "metadata", "type": "string", "required": false }
-    ],
-    "annotations": {
-      "pii": false,
-      "retention": "5years",
-      "real_time": true,
-      "searchable": true
-    }
+    ]
   }
 }
 

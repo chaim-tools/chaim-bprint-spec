@@ -13,13 +13,7 @@
       { "name": "createdAt", "type": "timestamp", "required": true },
       { "name": "createdBy", "type": "string", "required": false },
       { "name": "isActive", "type": "boolean", "required": false, "default": true }
-    ],
-    "annotations": {
-      "pii": false,
-      "retention": "10years",
-      "searchable": true,
-      "hierarchical": true
-    }
+    ]
   }
 }
 

@@ -18,14 +18,7 @@
       { "name": "batteryLevel", "type": "number", "required": false },
       { "name": "signalStrength", "type": "number", "required": false },
       { "name": "processed", "type": "boolean", "required": false, "default": false }
-    ],
-    "annotations": {
-      "pii": false,
-      "retention": "2years",
-      "time_series": true,
-      "real_time": true,
-      "compression": "enabled"
-    }
+    ]
   }
 }
 

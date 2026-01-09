@@ -1,4 +1,10 @@
-import { SchemaData, Entity, PrimaryKey, Field } from '../types';
+import {
+  SchemaData,
+  Entity,
+  PrimaryKey,
+  Field,
+  FieldConstraints,
+} from '../types';
 
 /**
  * Validates a schema object against the official chaim-bprint-spec
@@ -44,7 +50,6 @@ function validateEntity(entity: any): Entity {
   return {
     primaryKey,
     fields,
-    annotations: entity.annotations,
   };
 }
 
@@ -97,6 +102,11 @@ function validateFields(fields: any[]): Field[] {
       }
     }
 
+    // Validate field constraints
+    if (field.constraints) {
+      validateFieldConstraints(field.name, field.type, field.constraints);
+    }
+
     validatedFields.push({
       name: field.name,
       type: field.type,
@@ -104,6 +114,7 @@ function validateFields(fields: any[]): Field[] {
       default: field.default,
       enum: field.enum,
       description: field.description,
+      constraints: field.constraints,
       annotations: field.annotations,
     });
   }
@@ -126,5 +137,112 @@ function validateDefaultValue(defaultValue: any, fieldType: string): boolean {
       return typeof defaultValue === 'string';
     default:
       return false;
+  }
+}
+
+/**
+ * Validates field constraints are appropriate for the field type
+ */
+function validateFieldConstraints(
+  fieldName: string,
+  fieldType: string,
+  constraints: FieldConstraints
+): void {
+  // Validate string constraints only apply to string fields
+  if (constraints.minLength !== undefined) {
+    if (fieldType !== 'string') {
+      throw new Error(
+        `Field '${fieldName}' has minLength constraint but is not a string type`
+      );
+    }
+    if (
+      typeof constraints.minLength !== 'number' ||
+      constraints.minLength < 0 ||
+      !Number.isInteger(constraints.minLength)
+    ) {
+      throw new Error(
+        `Field '${fieldName}' minLength must be a non-negative integer`
+      );
+    }
+  }
+
+  if (constraints.maxLength !== undefined) {
+    if (fieldType !== 'string') {
+      throw new Error(
+        `Field '${fieldName}' has maxLength constraint but is not a string type`
+      );
+    }
+    if (
+      typeof constraints.maxLength !== 'number' ||
+      constraints.maxLength < 0 ||
+      !Number.isInteger(constraints.maxLength)
+    ) {
+      throw new Error(
+        `Field '${fieldName}' maxLength must be a non-negative integer`
+      );
+    }
+  }
+
+  // Validate minLength <= maxLength when both are specified
+  if (
+    constraints.minLength !== undefined &&
+    constraints.maxLength !== undefined
+  ) {
+    if (constraints.minLength > constraints.maxLength) {
+      throw new Error(
+        `Field '${fieldName}' minLength (${constraints.minLength}) cannot be greater than maxLength (${constraints.maxLength})`
+      );
+    }
+  }
+
+  if (constraints.pattern !== undefined) {
+    if (fieldType !== 'string') {
+      throw new Error(
+        `Field '${fieldName}' has pattern constraint but is not a string type`
+      );
+    }
+    if (typeof constraints.pattern !== 'string') {
+      throw new Error(`Field '${fieldName}' pattern must be a string`);
+    }
+    // Validate that the pattern is a valid regex
+    try {
+      new RegExp(constraints.pattern);
+    } catch {
+      throw new Error(
+        `Field '${fieldName}' pattern is not a valid regular expression`
+      );
+    }
+  }
+
+  // Validate number constraints only apply to number fields
+  if (constraints.min !== undefined) {
+    if (fieldType !== 'number') {
+      throw new Error(
+        `Field '${fieldName}' has min constraint but is not a number type`
+      );
+    }
+    if (typeof constraints.min !== 'number') {
+      throw new Error(`Field '${fieldName}' min must be a number`);
+    }
+  }
+
+  if (constraints.max !== undefined) {
+    if (fieldType !== 'number') {
+      throw new Error(
+        `Field '${fieldName}' has max constraint but is not a number type`
+      );
+    }
+    if (typeof constraints.max !== 'number') {
+      throw new Error(`Field '${fieldName}' max must be a number`);
+    }
+  }
+
+  // Validate min <= max when both are specified
+  if (constraints.min !== undefined && constraints.max !== undefined) {
+    if (constraints.min > constraints.max) {
+      throw new Error(
+        `Field '${fieldName}' min (${constraints.min}) cannot be greater than max (${constraints.max})`
+      );
+    }
   }
 }

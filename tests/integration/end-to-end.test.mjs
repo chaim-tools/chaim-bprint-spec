@@ -51,10 +51,6 @@ test('End-to-End Validation Workflow', async t => {
     assert.ok(tagsField.enum, 'Tags field should have enum values');
     assert.deepEqual(tagsField.enum, ['electronics', 'clothing', 'books']);
 
-    // 8. Verify annotations
-    assert.ok(productEntity.annotations, 'Should have annotations');
-    assert.equal(productEntity.annotations.pii, false);
-    assert.equal(productEntity.annotations.retention, '7years');
   });
 
   await t.test('validation rejects invalid schemas appropriately', async () => {
@@ -107,6 +103,86 @@ test('End-to-End Validation Workflow', async t => {
       );
     }
   );
+
+  await t.test('field constraints are validated correctly', async () => {
+    // Import the TypeScript validation function
+    const { validateSchema } = await import('../../dist/index.js');
+
+    // Test valid schema with constraints
+    const constrainedSchema = JSON.parse(
+      await readFile('tests/fixtures/valid/user-with-constraints.bprint', 'utf8')
+    );
+
+    // Should not throw - validates with constraints
+    const validated = validateSchema(constrainedSchema);
+    assert.ok(validated, 'Schema with constraints should pass validation');
+    assert.equal(validated.entity.fields.length, 9, 'Should have 9 fields');
+
+    // Verify constraints are preserved
+    const emailField = validated.entity.fields.find(f => f.name === 'email');
+    assert.ok(emailField.constraints, 'Email field should have constraints');
+    assert.equal(emailField.constraints.minLength, 5);
+    assert.equal(emailField.constraints.maxLength, 254);
+
+    const ageField = validated.entity.fields.find(f => f.name === 'age');
+    assert.equal(ageField.constraints.min, 0);
+    assert.equal(ageField.constraints.max, 150);
+
+    // Test invalid constraint: string constraint on number field
+    const invalidStringConstraint = JSON.parse(
+      await readFile('tests/fixtures/invalid/invalid-string-constraint-on-number.bprint', 'utf8')
+    );
+
+    assert.throws(
+      () => validateSchema(invalidStringConstraint),
+      /minLength constraint but is not a string type/,
+      'Should reject string constraint on number field'
+    );
+
+    // Test invalid constraint: number constraint on string field
+    const invalidNumberConstraint = JSON.parse(
+      await readFile('tests/fixtures/invalid/invalid-number-constraint-on-string.bprint', 'utf8')
+    );
+
+    assert.throws(
+      () => validateSchema(invalidNumberConstraint),
+      /min constraint but is not a number type/,
+      'Should reject number constraint on string field'
+    );
+
+    // Test invalid: min > max
+    const invalidMinMax = JSON.parse(
+      await readFile('tests/fixtures/invalid/invalid-min-greater-than-max.bprint', 'utf8')
+    );
+
+    assert.throws(
+      () => validateSchema(invalidMinMax),
+      /min.*cannot be greater than max/,
+      'Should reject min > max'
+    );
+
+    // Test invalid: minLength > maxLength
+    const invalidMinMaxLength = JSON.parse(
+      await readFile('tests/fixtures/invalid/invalid-minlength-greater-than-maxlength.bprint', 'utf8')
+    );
+
+    assert.throws(
+      () => validateSchema(invalidMinMaxLength),
+      /minLength.*cannot be greater than maxLength/,
+      'Should reject minLength > maxLength'
+    );
+
+    // Test invalid: bad regex pattern
+    const invalidRegex = JSON.parse(
+      await readFile('tests/fixtures/invalid/invalid-regex-pattern.bprint', 'utf8')
+    );
+
+    assert.throws(
+      () => validateSchema(invalidRegex),
+      /pattern is not a valid regular expression/,
+      'Should reject invalid regex pattern'
+    );
+  });
 
   await t.test('schema loading and caching works correctly', async () => {
     // Test that schema is properly cached

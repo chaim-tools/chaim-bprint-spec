@@ -20,13 +20,6 @@
       { "name": "vitalSigns", "type": "string", "required": false },
       { "name": "notes", "type": "string", "required": false },
       { "name": "attachments", "type": "string", "required": false }
-    ],
-    "annotations": {
-      "phi": true,
-      "retention": "7years",
-      "encryption": "required",
-      "audit": "required",
-      "compliance": "HIPAA"
-    }
+    ]
   }
 }

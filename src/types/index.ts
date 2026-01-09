@@ -12,7 +12,6 @@ export interface SchemaData {
 export interface Entity {
   primaryKey: PrimaryKey;
   fields: Field[];
-  annotations?: Record<string, any>;
 }
 
 export interface PrimaryKey {
@@ -27,5 +26,33 @@ export interface Field {
   default?: string | number | boolean;
   enum?: string[];
   description?: string;
-  annotations?: Record<string, any>;
+  constraints?: FieldConstraints;
+  annotations?: FieldAnnotations;
+}
+
+/**
+ * Field-level validation constraints
+ */
+export interface FieldConstraints {
+  // String constraints
+  /** Minimum string length (applies to string type) */
+  minLength?: number;
+  /** Maximum string length (applies to string type) */
+  maxLength?: number;
+  /** Regex pattern for validation (applies to string type) */
+  pattern?: string;
+
+  // Number constraints
+  /** Minimum value (applies to number type) */
+  min?: number;
+  /** Maximum value (applies to number type) */
+  max?: number;
+}
+
+/**
+ * Field-level metadata annotations (extensible)
+ */
+export interface FieldAnnotations {
+  /** Additional custom annotations */
+  [key: string]: unknown;
 }

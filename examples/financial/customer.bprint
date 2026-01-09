@@ -17,14 +17,7 @@
       { "name": "riskCategory", "type": "string", "enum": ["low", "medium", "high"], "required": false },
       { "name": "createdAt", "type": "timestamp", "required": true },
       { "name": "lastUpdated", "type": "timestamp", "required": true }
-    ],
-    "annotations": {
-      "pii": true,
-      "retention": "10years",
-      "encryption": "required",
-      "audit": "required",
-      "compliance": "GDPR"
-    }
+    ]
   }
 }
 

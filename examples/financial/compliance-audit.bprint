@@ -18,13 +18,6 @@
       { "name": "ipAddress", "type": "string", "required": false },
       { "name": "userAgent", "type": "string", "required": false },
       { "name": "complianceCheck", "type": "string", "enum": ["passed", "failed", "warning"], "required": false }
-    ],
-    "annotations": {
-      "pii": false,
-      "retention": "10years",
-      "encryption": "required",
-      "audit": "required",
-      "immutable": true
-    }
+    ]
   }
 }

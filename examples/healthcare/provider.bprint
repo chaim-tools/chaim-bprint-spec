@@ -15,12 +15,6 @@
       { "name": "email", "type": "string", "required": true },
       { "name": "isActive", "type": "boolean", "required": false, "default": true },
       { "name": "createdAt", "type": "timestamp", "required": true }
-    ],
-    "annotations": {
-      "pii": true,
-      "retention": "10years",
-      "encryption": "required",
-      "audit": "required"
-    }
+    ]
   }
 }

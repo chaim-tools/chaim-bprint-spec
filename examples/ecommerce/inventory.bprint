@@ -14,11 +14,6 @@
       { "name": "reservedQuantity", "type": "number", "required": false, "default": 0 },
       { "name": "reorderPoint", "type": "number", "required": false, "default": 10 },
       { "name": "lastUpdated", "type": "timestamp", "required": true }
-    ],
-    "annotations": {
-      "pii": false,
-      "retention": "5years",
-      "real_time": true
-    }
+    ]
   }
 }

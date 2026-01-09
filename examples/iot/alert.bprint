@@ -19,12 +19,6 @@
       { "name": "acknowledgedAt", "type": "timestamp", "required": false },
       { "name": "resolved", "type": "boolean", "required": false, "default": false },
       { "name": "resolvedAt", "type": "timestamp", "required": false }
-    ],
-    "annotations": {
-      "pii": false,
-      "retention": "1year",
-      "real_time": true,
-      "notification": "enabled"
-    }
+    ]
   }
 }

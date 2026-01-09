@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "v1",
+  "namespace": "test.invalid",
+  "description": "Invalid: malformed regex pattern",
+  "entity": {
+    "primaryKey": { "partitionKey": "id" },
+    "fields": [
+      {
+        "name": "id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "code",
+        "type": "string",
+        "required": true,
+        "constraints": {
+          "pattern": "[invalid(regex"
+        }
+      }
+    ]
+  }
+}
+
