@@ -81,7 +81,7 @@ test('End-to-End Validation Workflow', async t => {
     async () => {
       // Test duplicate field names
       const duplicateFields = {
-        schemaVersion: 'v1',
+        schemaVersion: 1.0,
         namespace: 'test',
         description: 'Test with duplicate fields',
         entity: {
@@ -198,7 +198,7 @@ test('End-to-End Validation Workflow', async t => {
 
     // Test validation works with cached schema
     const testSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test',
       description: 'Test schema',
       entity: {

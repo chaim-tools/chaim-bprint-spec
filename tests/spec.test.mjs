@@ -86,7 +86,7 @@ test('Field Validation', async t => {
 
     for (const fieldType of validFieldTypes) {
       const testSchema = {
-        schemaVersion: 'v1',
+        schemaVersion: 1.0,
         namespace: 'test',
         description: 'Test entity',
         entity: {
@@ -104,7 +104,7 @@ test('Field Validation', async t => {
     const validate = await loadSchema();
 
     const testSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test',
       description: 'Test entity',
       entity: {
@@ -124,7 +124,7 @@ test('Edge Cases', async t => {
     const validate = await loadSchema();
 
     const testSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test',
       description: 'Test schema',
     };
@@ -137,7 +137,7 @@ test('Edge Cases', async t => {
     const validate = await loadSchema();
 
     const testSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test',
       description: 'Test entity',
       entity: {
@@ -154,7 +154,7 @@ test('Edge Cases', async t => {
     const validate = await loadSchema();
 
     const testSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test',
       description: 'Test entity',
       entity: {
@@ -196,7 +196,7 @@ test('Advanced Validation', async t => {
     const validate = await loadSchema();
 
     const complexSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.complex',
       description: 'Complex schema with enums and defaults',
       entity: {
@@ -224,7 +224,7 @@ test('Advanced Validation', async t => {
     const validate = await loadSchema();
 
     const sortKeySchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.sortkey',
       description: 'Schema with sort key',
       entity: {
@@ -248,7 +248,7 @@ test('Advanced Validation', async t => {
     const validate = await loadSchema();
 
     const annotatedSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.annotations',
       description: 'Schema with field annotations',
       entity: {
@@ -282,7 +282,7 @@ test('Error Handling & Edge Cases', async t => {
 
     // Test with missing required fields
     const missingRequired = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test',
       description: 'Missing required fields',
       // Missing entity
@@ -305,7 +305,7 @@ test('Error Handling & Edge Cases', async t => {
 
     // Test empty enum array
     const emptyEnum = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test',
       description: 'Empty enum array',
       entity: {
@@ -326,7 +326,7 @@ test('Error Handling & Edge Cases', async t => {
 
     // Test invalid primary key
     const invalidPrimaryKey = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test',
       description: 'Invalid primary key',
       entity: {
@@ -347,7 +347,7 @@ test('Error Handling & Edge Cases', async t => {
 
     // Test invalid field names
     const invalidFieldNames = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test',
       description: 'Invalid field names',
       entity: {
@@ -369,7 +369,7 @@ test('Validation Helper Functions', async t => {
   await t.test('countEntitiesAndFields with various schemas', async () => {
     // Test with valid schema
     const validSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test',
       description: 'Valid schema',
       entity: {
@@ -387,7 +387,7 @@ test('Validation Helper Functions', async t => {
 
     // Test with missing entity
     const missingEntity = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test',
       description: 'Missing entity',
     };
@@ -405,7 +405,7 @@ test('Validation Helper Functions', async t => {
   await t.test('validateCustomRules with edge cases', async () => {
     // Test with empty entity
     const emptyEntity = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test',
       description: 'Empty entity',
       entity: {},
@@ -420,7 +420,7 @@ test('Validation Helper Functions', async t => {
 
     // Test with entity but no fields
     const noFields = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test',
       description: 'No fields',
       entity: {
@@ -518,7 +518,7 @@ test('Performance & Stress Testing', async t => {
 
     // Create schema with many fields
     const largeSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.large',
       description: 'Large schema with many fields',
       entity: {
@@ -555,7 +555,7 @@ test('Performance & Stress Testing', async t => {
 
     // Create schema with complex field annotations
     const complexSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.complex',
       description: 'Complex schema with custom field annotations',
       entity: {
@@ -593,7 +593,7 @@ test('Field Constraints', async t => {
 
   await t.test('valid string constraints are accepted', async () => {
     const schemaWithStringConstraints = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.constraints',
       description: 'Schema with string constraints',
       entity: {
@@ -633,7 +633,7 @@ test('Field Constraints', async t => {
 
   await t.test('valid number constraints are accepted', async () => {
     const schemaWithNumberConstraints = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.constraints',
       description: 'Schema with number constraints',
       entity: {
@@ -670,7 +670,7 @@ test('Field Constraints', async t => {
 
   await t.test('string constraints on non-string field are rejected', async () => {
     const invalidSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.constraints',
       description: 'Invalid: string constraints on number field',
       entity: {
@@ -698,7 +698,7 @@ test('Field Constraints', async t => {
 
   await t.test('maxLength constraint on non-string field is rejected', async () => {
     const invalidSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.constraints',
       description: 'Invalid: maxLength on boolean field',
       entity: {
@@ -725,7 +725,7 @@ test('Field Constraints', async t => {
 
   await t.test('pattern constraint on non-string field is rejected', async () => {
     const invalidSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.constraints',
       description: 'Invalid: pattern on timestamp field',
       entity: {
@@ -752,7 +752,7 @@ test('Field Constraints', async t => {
 
   await t.test('number constraints on non-number field are rejected', async () => {
     const invalidSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.constraints',
       description: 'Invalid: min/max on string field',
       entity: {
@@ -779,7 +779,7 @@ test('Field Constraints', async t => {
 
   await t.test('max constraint on non-number field is rejected', async () => {
     const invalidSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.constraints',
       description: 'Invalid: max on boolean field',
       entity: {
@@ -806,7 +806,7 @@ test('Field Constraints', async t => {
 
   await t.test('minLength greater than maxLength is rejected', async () => {
     const invalidSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.constraints',
       description: 'Invalid: minLength > maxLength',
       entity: {
@@ -834,7 +834,7 @@ test('Field Constraints', async t => {
 
   await t.test('min greater than max is rejected', async () => {
     const invalidSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.constraints',
       description: 'Invalid: min > max',
       entity: {
@@ -862,7 +862,7 @@ test('Field Constraints', async t => {
 
   await t.test('invalid regex pattern is rejected', async () => {
     const invalidSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.constraints',
       description: 'Invalid: bad regex pattern',
       entity: {
@@ -889,7 +889,7 @@ test('Field Constraints', async t => {
 
   await t.test('negative minLength is rejected', async () => {
     const invalidSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.constraints',
       description: 'Invalid: negative minLength',
       entity: {
@@ -916,7 +916,7 @@ test('Field Constraints', async t => {
 
   await t.test('non-integer minLength is rejected', async () => {
     const invalidSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.constraints',
       description: 'Invalid: non-integer minLength',
       entity: {
@@ -943,7 +943,7 @@ test('Field Constraints', async t => {
 
   await t.test('custom annotations are preserved', async () => {
     const validSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.metadata',
       description: 'Schema with custom annotations',
       entity: {
@@ -970,7 +970,7 @@ test('Field Constraints', async t => {
 
   await t.test('combined constraints and annotations work', async () => {
     const validSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.combined',
       description: 'Schema with combined constraints and annotations',
       entity: {
@@ -1029,7 +1029,7 @@ test('Field Constraints', async t => {
 
   await t.test('schema without constraints still validates', async () => {
     const simpleSchema = {
-      schemaVersion: 'v1',
+      schemaVersion: 1.0,
       namespace: 'test.simple',
       description: 'Simple schema without constraints',
       entity: {
