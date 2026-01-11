@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "v1",
+  "schemaVersion": 1.0,
   "namespace": "healthcare.clinic.provider",
   "description": "Healthcare provider information and credentials for clinic management",
   "entity": {

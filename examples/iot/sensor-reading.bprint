@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "v1",
+  "schemaVersion": 1.0,
   "namespace": "iot.sensors.reading",
   "description": "Time-series sensor data readings from IoT devices",
   "entity": {

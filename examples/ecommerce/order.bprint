@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "v1",
+  "schemaVersion": 1.0,
   "namespace": "ecommerce.store.order",
   "description": "Customer order information and transaction details for e-commerce platform",
   "entity": {

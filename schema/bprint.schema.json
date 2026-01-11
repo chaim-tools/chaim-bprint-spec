@@ -7,9 +7,8 @@
   "additionalProperties": false,
   "properties": {
     "schemaVersion": {
-      "type": "string",
-      "minLength": 1,
-      "description": "Semantic or opaque schema version string (e.g., 'v1')."
+      "type": "number",
+      "description": "Schema version number (e.g., 1.0, 2.0)."
     },
     "namespace": {
       "type": "string",

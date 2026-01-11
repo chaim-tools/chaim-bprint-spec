@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "v1",
+  "schemaVersion": 1.0,
   "namespace": "acme.test",
   "description": "Test entity with invalid empty enum",
   "entity": {

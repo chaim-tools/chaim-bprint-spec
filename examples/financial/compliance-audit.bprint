@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "v1",
+  "schemaVersion": 1.0,
   "namespace": "financial.banking.compliance-audit",
   "description": "Compliance and audit trail for regulatory requirements in financial services",
   "entity": {

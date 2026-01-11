@@ -3,7 +3,7 @@
  * Based on the official JSON schema specification
  */
 export interface SchemaData {
-  schemaVersion: string;
+  schemaVersion: number;
   namespace: string;
   description: string;
   entity: Entity;

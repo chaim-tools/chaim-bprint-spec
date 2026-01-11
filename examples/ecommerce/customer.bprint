@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "v1",
+  "schemaVersion": 1.0,
   "namespace": "ecommerce.store.customer",
   "description": "Customer account information and profile data for e-commerce platform",
   "entity": {

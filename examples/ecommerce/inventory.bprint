@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "v1",
+  "schemaVersion": 1.0,
   "namespace": "ecommerce.store.inventory",
   "description": "Product inventory tracking across warehouses for e-commerce platform",
   "entity": {

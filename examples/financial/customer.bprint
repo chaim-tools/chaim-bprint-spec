@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "v1",
+  "schemaVersion": 1.0,
   "namespace": "financial.banking.customer",
   "description": "Customer profile and KYC information for financial services",
   "entity": {

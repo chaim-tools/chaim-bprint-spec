@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "v1",
+  "schemaVersion": 1.0,
   "namespace": "iot.sensors.alert",
   "description": "Device alerts and notifications for IoT sensor management",
   "entity": {
