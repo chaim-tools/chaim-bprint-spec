@@ -81,15 +81,13 @@ test('End-to-End Validation Workflow', async t => {
       // Test duplicate field names
       const duplicateFields = {
         schemaVersion: 1.0,
-        namespace: 'test',
+        entityName: 'test',
         description: 'Test with duplicate fields',
-        entity: {
-          primaryKey: { partitionKey: 'id' },
-          fields: [
-            { name: 'id', type: 'string', required: true },
-            { name: 'id', type: 'string', required: true },
-          ],
-        },
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          { name: 'id', type: 'string', required: true },
+        ],
       };
 
       const fieldErrors = validateCustomRules(duplicateFields);
