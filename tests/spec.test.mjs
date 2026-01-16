@@ -561,7 +561,7 @@ test('Performance & Stress Testing', async t => {
 // Test suite for field constraints
 test('Field Constraints', async t => {
   // Import the TypeScript validation function for constraint testing
-  const { validateSchema } = await import('../dist/index.js');
+  const { validateSchema } = await import('../dist/src/index.js');
 
   await t.test('valid string constraints are accepted', async () => {
     const schemaWithStringConstraints = {

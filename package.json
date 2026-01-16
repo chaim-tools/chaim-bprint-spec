@@ -1,9 +1,9 @@
 {
   "name": "@chaim-tools/chaim-bprint-spec",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Chaim Blueprint (.bprint) schema specification and TypeScript types",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "private": false,
   "type": "commonjs",
   "files": [
@@ -26,8 +26,8 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
     },
     "./schema": "./schema/bprint.schema.json"
   },
