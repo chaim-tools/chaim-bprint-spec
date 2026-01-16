@@ -1,20 +1,18 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "healthcare.clinic.provider",
+  "entityName": "Provider",
   "description": "Healthcare provider information and credentials for clinic management",
-  "entity": {
-    "primaryKey": { "partitionKey": "providerId" },
-    "fields": [
-      { "name": "providerId", "type": "string", "required": true },
-      { "name": "npi", "type": "string", "required": true },
-      { "name": "firstName", "type": "string", "required": true },
-      { "name": "lastName", "type": "string", "required": true },
-      { "name": "specialty", "type": "string", "required": true },
-      { "name": "licenseNumber", "type": "string", "required": true },
-      { "name": "phone", "type": "string", "required": true },
-      { "name": "email", "type": "string", "required": true },
-      { "name": "isActive", "type": "boolean", "required": false, "default": true },
-      { "name": "createdAt", "type": "timestamp", "required": true }
-    ]
-  }
+  "primaryKey": { "partitionKey": "providerId" },
+  "fields": [
+    { "name": "providerId", "type": "string", "required": true },
+    { "name": "npi", "type": "string", "required": true },
+    { "name": "firstName", "type": "string", "required": true },
+    { "name": "lastName", "type": "string", "required": true },
+    { "name": "specialty", "type": "string", "required": true },
+    { "name": "licenseNumber", "type": "string", "required": true },
+    { "name": "phone", "type": "string", "required": true },
+    { "name": "email", "type": "string", "required": true },
+    { "name": "isActive", "type": "boolean", "required": false, "default": true },
+    { "name": "createdAt", "type": "timestamp", "required": true }
+  ]
 }

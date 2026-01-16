@@ -1,11 +1,9 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "acme.orders",
+  "entityName": "Order",
   "description": "Order missing partition key",
-  "entity": {
-    "primaryKey": {},
-    "fields": [
-      { "name": "orderId", "type": "string", "required": true }
-    ]
-  }
+  "primaryKey": {},
+  "fields": [
+    { "name": "orderId", "type": "string", "required": true }
+  ]
 }

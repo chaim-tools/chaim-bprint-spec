@@ -1,25 +1,22 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "test.invalid",
+  "entityName": "Invalid",
   "description": "Invalid: min constraint on string field",
-  "entity": {
-    "primaryKey": { "partitionKey": "id" },
-    "fields": [
-      {
-        "name": "id",
-        "type": "string",
-        "required": true
-      },
-      {
-        "name": "name",
-        "type": "string",
-        "required": true,
-        "constraints": {
-          "min": 0,
-          "max": 100
-        }
+  "primaryKey": { "partitionKey": "id" },
+  "fields": [
+    {
+      "name": "id",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "constraints": {
+        "min": 0,
+        "max": 100
       }
-    ]
-  }
+    }
+  ]
 }
-

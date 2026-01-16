@@ -1,15 +1,13 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "acme.users",
+  "entityName": "User",
   "description": "User account information",
-  "entity": {
-    "primaryKey": { "partitionKey": "userId" },
-    "fields": [
-      { "name": "userId", "type": "string", "required": true },
-      { "name": "email", "type": "string", "required": true },
-      { "name": "name", "type": "string", "required": true },
-      { "name": "active", "type": "boolean", "required": false, "default": true },
-      { "name": "createdAt", "type": "timestamp", "required": true }
-    ]
-  }
+  "primaryKey": { "partitionKey": "userId" },
+  "fields": [
+    { "name": "userId", "type": "string", "required": true },
+    { "name": "email", "type": "string", "required": true },
+    { "name": "name", "type": "string", "required": true },
+    { "name": "active", "type": "boolean", "required": false, "default": true },
+    { "name": "createdAt", "type": "timestamp", "required": true }
+  ]
 }

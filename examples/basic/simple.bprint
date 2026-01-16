@@ -1,13 +1,11 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "simple.example",
+  "entityName": "Example",
   "description": "Minimal example with single entity for basic usage",
-  "entity": {
-    "primaryKey": { "partitionKey": "id" },
-    "fields": [
-      { "name": "id", "type": "string", "required": true },
-      { "name": "name", "type": "string", "required": true },
-      { "name": "email", "type": "string", "required": true }
-    ]
-  }
+  "primaryKey": { "partitionKey": "id" },
+  "fields": [
+    { "name": "id", "type": "string", "required": true },
+    { "name": "name", "type": "string", "required": true },
+    { "name": "email", "type": "string", "required": true }
+  ]
 }

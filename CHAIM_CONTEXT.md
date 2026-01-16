@@ -73,27 +73,25 @@ Each `.bprint` file defines **exactly one entity**:
 
 ```json
 {
-  "schemaVersion": "string",    // Required: Version identifier (e.g., "v1")
-  "namespace": "string",        // Required: Logical namespace (e.g., "order")
+  "schemaVersion": number,      // Required: Version number (e.g., 1.0, 2.0)
+  "entityName": "string",       // Required: Entity name (e.g., "User", "Order")
   "description": "string",      // Required: Human-readable description
-  "entity": {                   // Required: Single entity definition
-    "primaryKey": {
-      "partitionKey": "string", // Required: Partition key field name
-      "sortKey": "string"       // Optional: Sort key for composite keys
-    },
-    "fields": [                 // Required: At least one field
-      {
-        "name": "string",       // Required: Field identifier
-        "type": "enum",         // Required: string | number | boolean | timestamp
-        "required": false,      // Optional: Default false
-        "default": "any",       // Optional: Default value
-        "enum": ["..."],        // Optional: Allowed values (string fields)
-        "description": "string",// Optional: Field documentation
-        "constraints": {},      // Optional: Validation constraints
-        "annotations": {}       // Optional: Custom metadata (extensible)
-      }
-    ]
-  }
+  "primaryKey": {               // Required: Primary key definition
+    "partitionKey": "string",   // Required: Partition key field name
+    "sortKey": "string"         // Optional: Sort key for composite keys
+  },
+  "fields": [                   // Required: At least one field
+    {
+      "name": "string",         // Required: Field identifier
+      "type": "enum",           // Required: string | number | boolean | timestamp
+      "required": false,        // Optional: Default false
+      "default": "any",         // Optional: Default value
+      "enum": ["..."],          // Optional: Allowed values (string fields)
+      "description": "string",  // Optional: Field documentation
+      "constraints": {},        // Optional: Validation constraints
+      "annotations": {}         // Optional: Custom metadata (extensible)
+    }
+  ]
 }
 ```
 
@@ -204,13 +202,9 @@ import { schema } from '@chaim-tools/chaim-bprint-spec';
 
 ```typescript
 interface SchemaData {
-  schemaVersion: string;
-  namespace: string;
+  schemaVersion: number;
+  entityName: string;
   description: string;
-  entity: Entity;
-}
-
-interface Entity {
   primaryKey: PrimaryKey;
   fields: Field[];
 }
@@ -341,17 +335,15 @@ new ChaimBinder(this, 'OrderSchema', {
 
 ```json
 {
-  "schemaVersion": "v1",
-  "namespace": "simple.example",
+  "schemaVersion": 1.0,
+  "entityName": "Example",
   "description": "Minimal example with single entity for basic usage",
-  "entity": {
-    "primaryKey": { "partitionKey": "id" },
-    "fields": [
-      { "name": "id", "type": "string", "required": true },
-      { "name": "name", "type": "string", "required": true },
-      { "name": "email", "type": "string", "required": true }
-    ]
-  }
+  "primaryKey": { "partitionKey": "id" },
+  "fields": [
+    { "name": "id", "type": "string", "required": true },
+    { "name": "name", "type": "string", "required": true },
+    { "name": "email", "type": "string", "required": true }
+  ]
 }
 ```
 
@@ -397,11 +389,13 @@ new ChaimBinder(this, 'OrderSchema', {
 
 | Error | Cause |
 |-------|-------|
+| `Schema must include schemaVersion field` | Missing required `schemaVersion` |
+| `Schema must include entityName field` | Missing required `entityName` |
 | `Schema must include description field` | Missing required `description` |
-| `Entity must include primaryKey field` | Missing `primaryKey` object |
+| `Schema must include primaryKey field` | Missing `primaryKey` object |
 | `PrimaryKey must include partitionKey as a string` | Missing or invalid partition key |
 | `Field must have a valid type` | Type not in allowed enum |
-| `Duplicate field name: X` | Field names must be unique within entity |
+| `Duplicate field name: X` | Field names must be unique |
 
 ---
 

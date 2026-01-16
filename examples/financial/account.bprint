@@ -1,51 +1,49 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "financial.banking.account",
+  "entityName": "Account",
   "description": "Bank account information and balance tracking for financial services",
-  "entity": {
-    "primaryKey": { "partitionKey": "accountId" },
-    "fields": [
-      { "name": "accountId", "type": "string", "required": true },
-      { "name": "customerId", "type": "string", "required": true },
-      {
-        "name": "accountNumber",
-        "type": "string",
-        "required": true,
-        "constraints": {
-          "minLength": 10,
-          "maxLength": 17,
-          "pattern": "^[0-9]+$"
-        }
-      },
-      { "name": "accountType", "type": "string", "enum": ["checking", "savings", "credit", "investment"], "required": true },
-      {
-        "name": "balance",
-        "type": "number",
-        "required": true,
-        "constraints": { "min": -1000000, "max": 1000000000 }
-      },
-      {
-        "name": "currency",
-        "type": "string",
-        "required": false,
-        "default": "USD",
-        "constraints": { "minLength": 3, "maxLength": 3 }
-      },
-      { "name": "status", "type": "string", "enum": ["active", "suspended", "closed", "frozen"], "required": true },
-      { "name": "openedDate", "type": "timestamp", "required": true },
-      { "name": "lastActivityDate", "type": "timestamp", "required": true },
-      {
-        "name": "dailyLimit",
-        "type": "number",
-        "required": false,
-        "constraints": { "min": 0, "max": 100000 }
-      },
-      {
-        "name": "monthlyLimit",
-        "type": "number",
-        "required": false,
-        "constraints": { "min": 0, "max": 1000000 }
+  "primaryKey": { "partitionKey": "accountId" },
+  "fields": [
+    { "name": "accountId", "type": "string", "required": true },
+    { "name": "customerId", "type": "string", "required": true },
+    {
+      "name": "accountNumber",
+      "type": "string",
+      "required": true,
+      "constraints": {
+        "minLength": 10,
+        "maxLength": 17,
+        "pattern": "^[0-9]+$"
       }
-    ]
-  }
+    },
+    { "name": "accountType", "type": "string", "enum": ["checking", "savings", "credit", "investment"], "required": true },
+    {
+      "name": "balance",
+      "type": "number",
+      "required": true,
+      "constraints": { "min": -1000000, "max": 1000000000 }
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "required": false,
+      "default": "USD",
+      "constraints": { "minLength": 3, "maxLength": 3 }
+    },
+    { "name": "status", "type": "string", "enum": ["active", "suspended", "closed", "frozen"], "required": true },
+    { "name": "openedDate", "type": "timestamp", "required": true },
+    { "name": "lastActivityDate", "type": "timestamp", "required": true },
+    {
+      "name": "dailyLimit",
+      "type": "number",
+      "required": false,
+      "constraints": { "min": 0, "max": 100000 }
+    },
+    {
+      "name": "monthlyLimit",
+      "type": "number",
+      "required": false,
+      "constraints": { "min": 0, "max": 1000000 }
+    }
+  ]
 }

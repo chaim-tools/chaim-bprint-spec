@@ -1,25 +1,22 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "test.invalid",
+  "entityName": "Invalid",
   "description": "Invalid: min is greater than max",
-  "entity": {
-    "primaryKey": { "partitionKey": "id" },
-    "fields": [
-      {
-        "name": "id",
-        "type": "string",
-        "required": true
-      },
-      {
-        "name": "quantity",
-        "type": "number",
-        "required": true,
-        "constraints": {
-          "min": 100,
-          "max": 10
-        }
+  "primaryKey": { "partitionKey": "id" },
+  "fields": [
+    {
+      "name": "id",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "quantity",
+      "type": "number",
+      "required": true,
+      "constraints": {
+        "min": 100,
+        "max": 10
       }
-    ]
-  }
+    }
+  ]
 }
-

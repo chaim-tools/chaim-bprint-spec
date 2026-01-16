@@ -4,12 +4,8 @@
  */
 export interface SchemaData {
   schemaVersion: number;
-  namespace: string;
+  entityName: string;
   description: string;
-  entity: Entity;
-}
-
-export interface Entity {
   primaryKey: PrimaryKey;
   fields: Field[];
 }

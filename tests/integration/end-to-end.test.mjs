@@ -46,8 +46,7 @@ test('End-to-End Validation Workflow', async t => {
     assert.equal(productsExample.description, 'Product catalog schema');
 
     // 7. Verify complex field types
-    const productEntity = productsExample.entity;
-    const tagsField = productEntity.fields.find(f => f.name === 'tags');
+    const tagsField = productsExample.fields.find(f => f.name === 'tags');
     assert.ok(tagsField.enum, 'Tags field should have enum values');
     assert.deepEqual(tagsField.enum, ['electronics', 'clothing', 'books']);
 
@@ -116,15 +115,15 @@ test('End-to-End Validation Workflow', async t => {
     // Should not throw - validates with constraints
     const validated = validateSchema(constrainedSchema);
     assert.ok(validated, 'Schema with constraints should pass validation');
-    assert.equal(validated.entity.fields.length, 9, 'Should have 9 fields');
+    assert.equal(validated.fields.length, 9, 'Should have 9 fields');
 
     // Verify constraints are preserved
-    const emailField = validated.entity.fields.find(f => f.name === 'email');
+    const emailField = validated.fields.find(f => f.name === 'email');
     assert.ok(emailField.constraints, 'Email field should have constraints');
     assert.equal(emailField.constraints.minLength, 5);
     assert.equal(emailField.constraints.maxLength, 254);
 
-    const ageField = validated.entity.fields.find(f => f.name === 'age');
+    const ageField = validated.fields.find(f => f.name === 'age');
     assert.equal(ageField.constraints.min, 0);
     assert.equal(ageField.constraints.max, 150);
 
@@ -199,12 +198,10 @@ test('End-to-End Validation Workflow', async t => {
     // Test validation works with cached schema
     const testSchema = {
       schemaVersion: 1.0,
-      namespace: 'test',
+      entityName: 'Test',
       description: 'Test schema',
-      entity: {
-        primaryKey: { partitionKey: 'id' },
-        fields: [{ name: 'id', type: 'string', required: true }],
-      },
+      primaryKey: { partitionKey: 'id' },
+      fields: [{ name: 'id', type: 'string', required: true }],
     };
 
     const isValid = validate1(testSchema);

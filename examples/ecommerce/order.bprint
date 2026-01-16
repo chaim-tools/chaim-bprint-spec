@@ -1,20 +1,18 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "ecommerce.store.order",
+  "entityName": "Order",
   "description": "Customer order information and transaction details for e-commerce platform",
-  "entity": {
-    "primaryKey": { "partitionKey": "orderId" },
-    "fields": [
-      { "name": "orderId", "type": "string", "required": true },
-      { "name": "customerId", "type": "string", "required": true },
-      { "name": "orderDate", "type": "timestamp", "required": true },
-      { "name": "status", "type": "string", "enum": ["pending", "confirmed", "shipped", "delivered", "cancelled"], "required": true },
-      { "name": "totalAmount", "type": "number", "required": true },
-      { "name": "currency", "type": "string", "required": false, "default": "USD" },
-      { "name": "shippingAddress", "type": "string", "required": true },
-      { "name": "billingAddress", "type": "string", "required": true },
-      { "name": "paymentMethod", "type": "string", "enum": ["credit_card", "debit_card", "paypal", "apple_pay"], "required": true },
-      { "name": "notes", "type": "string", "required": false }
-    ]
-  }
+  "primaryKey": { "partitionKey": "orderId" },
+  "fields": [
+    { "name": "orderId", "type": "string", "required": true },
+    { "name": "customerId", "type": "string", "required": true },
+    { "name": "orderDate", "type": "timestamp", "required": true },
+    { "name": "status", "type": "string", "enum": ["pending", "confirmed", "shipped", "delivered", "cancelled"], "required": true },
+    { "name": "totalAmount", "type": "number", "required": true },
+    { "name": "currency", "type": "string", "required": false, "default": "USD" },
+    { "name": "shippingAddress", "type": "string", "required": true },
+    { "name": "billingAddress", "type": "string", "required": true },
+    { "name": "paymentMethod", "type": "string", "enum": ["credit_card", "debit_card", "paypal", "apple_pay"], "required": true },
+    { "name": "notes", "type": "string", "required": false }
+  ]
 }

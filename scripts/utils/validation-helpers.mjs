@@ -15,17 +15,19 @@ export const findDuplicateEntityNames = () => {
 };
 
 /**
- * Find duplicate field names within a single entity
+ * Find duplicate field names within a schema
  */
-export const findDuplicateFieldNames = entity => {
+export const findDuplicateFieldNames = schema => {
   const errors = [];
   const fieldNames = {};
 
-  entity.fields.forEach((field, fieldIndex) => {
+  if (!schema.fields) return errors;
+
+  schema.fields.forEach((field, fieldIndex) => {
     if (field.name in fieldNames) {
       errors.push({
-        message: `Duplicate field name '${field.name}' in entity`,
-        path: `entity.fields[${fieldIndex}]`,
+        message: `Duplicate field name '${field.name}'`,
+        path: `fields[${fieldIndex}]`,
       });
     } else {
       fieldNames[field.name] = fieldIndex;
@@ -41,14 +43,14 @@ export const findDuplicateFieldNames = entity => {
 export const validateCustomRules = bprint => {
   const errors = [];
 
-  // Check for duplicate field names within the entity
-  if (bprint.entity && bprint.entity.fields) {
-    errors.push(...findDuplicateFieldNames(bprint.entity));
+  // Check for duplicate field names
+  if (bprint.fields) {
+    errors.push(...findDuplicateFieldNames(bprint));
   }
 
   // Validate field constraints for each field
-  if (bprint.entity && bprint.entity.fields) {
-    bprint.entity.fields.forEach(field => {
+  if (bprint.fields) {
+    bprint.fields.forEach(field => {
       errors.push(...validateFieldConstraints(field));
     });
   }
@@ -60,8 +62,8 @@ export const validateCustomRules = bprint => {
  * Count total entities and fields for reporting
  */
 export const countEntitiesAndFields = bprint => {
-  const entityCount = bprint.entity ? 1 : 0;
-  const fieldCount = bprint.entity?.fields?.length || 0;
+  const entityCount = bprint.fields ? 1 : 0;
+  const fieldCount = bprint.fields?.length || 0;
 
   return { entityCount, fieldCount };
 };

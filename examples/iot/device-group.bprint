@@ -1,19 +1,16 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "iot.sensors.device-group",
+  "entityName": "DeviceGroup",
   "description": "Logical grouping of IoT devices for management and monitoring",
-  "entity": {
-    "primaryKey": { "partitionKey": "groupId" },
-    "fields": [
-      { "name": "groupId", "type": "string", "required": true },
-      { "name": "name", "type": "string", "required": true },
-      { "name": "description", "type": "string", "required": false },
-      { "name": "category", "type": "string", "enum": ["environmental", "security", "industrial", "agricultural", "smart_home"], "required": true },
-      { "name": "location", "type": "string", "required": true },
-      { "name": "createdAt", "type": "timestamp", "required": true },
-      { "name": "createdBy", "type": "string", "required": false },
-      { "name": "isActive", "type": "boolean", "required": false, "default": true }
-    ]
-  }
+  "primaryKey": { "partitionKey": "groupId" },
+  "fields": [
+    { "name": "groupId", "type": "string", "required": true },
+    { "name": "name", "type": "string", "required": true },
+    { "name": "description", "type": "string", "required": false },
+    { "name": "category", "type": "string", "enum": ["environmental", "security", "industrial", "agricultural", "smart_home"], "required": true },
+    { "name": "location", "type": "string", "required": true },
+    { "name": "createdAt", "type": "timestamp", "required": true },
+    { "name": "createdBy", "type": "string", "required": false },
+    { "name": "isActive", "type": "boolean", "required": false, "default": true }
+  ]
 }
-

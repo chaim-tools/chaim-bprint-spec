@@ -87,12 +87,10 @@ test('Field Validation', async t => {
     for (const fieldType of validFieldTypes) {
       const testSchema = {
         schemaVersion: 1.0,
-        namespace: 'test',
+        entityName: 'Test',
         description: 'Test entity',
-        entity: {
-          primaryKey: { partitionKey: 'id' },
-          fields: [{ name: 'testField', type: fieldType, required: true }],
-        },
+        primaryKey: { partitionKey: 'id' },
+        fields: [{ name: 'testField', type: fieldType, required: true }],
       };
 
       const ok = validate(testSchema);
@@ -105,12 +103,10 @@ test('Field Validation', async t => {
 
     const testSchema = {
       schemaVersion: 1.0,
-      namespace: 'test',
+      entityName: 'Test',
       description: 'Test entity',
-      entity: {
-        primaryKey: { partitionKey: 'id' },
-        fields: [{ name: 'testField', type: 'invalid_type', required: true }],
-      },
+      primaryKey: { partitionKey: 'id' },
+      fields: [{ name: 'testField', type: 'invalid_type', required: true }],
     };
 
     const ok = validate(testSchema);
@@ -120,47 +116,44 @@ test('Field Validation', async t => {
 
 // Test suite for edge cases
 test('Edge Cases', async t => {
-  await t.test('missing entity is rejected', async () => {
+  await t.test('missing primaryKey is rejected', async () => {
     const validate = await loadSchema();
 
     const testSchema = {
       schemaVersion: 1.0,
-      namespace: 'test',
+      entityName: 'Test',
       description: 'Test schema',
+      fields: [{ name: 'id', type: 'string', required: true }],
     };
 
     const ok = validate(testSchema);
-    assert.equal(ok, false, 'Missing entity should be rejected');
+    assert.equal(ok, false, 'Missing primaryKey should be rejected');
   });
 
-  await t.test('entity without fields is rejected', async () => {
+  await t.test('schema without fields is rejected', async () => {
     const validate = await loadSchema();
 
     const testSchema = {
       schemaVersion: 1.0,
-      namespace: 'test',
+      entityName: 'Test',
       description: 'Test entity',
-      entity: {
-        primaryKey: { partitionKey: 'id' },
-        fields: [],
-      },
+      primaryKey: { partitionKey: 'id' },
+      fields: [],
     };
 
     const ok = validate(testSchema);
-    assert.equal(ok, false, 'Entity without fields should be rejected');
+    assert.equal(ok, false, 'Schema without fields should be rejected');
   });
 
-  await t.test('missing required fields are rejected', async () => {
+  await t.test('missing required fields array is rejected', async () => {
     const validate = await loadSchema();
 
     const testSchema = {
       schemaVersion: 1.0,
-      namespace: 'test',
+      entityName: 'Test',
       description: 'Test entity',
-      entity: {
-        primaryKey: { partitionKey: 'id' },
-        // Missing fields array
-      },
+      primaryKey: { partitionKey: 'id' },
+      // Missing fields array
     };
 
     const ok = validate(testSchema);
@@ -197,23 +190,21 @@ test('Advanced Validation', async t => {
 
     const complexSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.complex',
+      entityName: 'Complex',
       description: 'Complex schema with enums and defaults',
-      entity: {
-        primaryKey: { partitionKey: 'id' },
-        fields: [
-          { name: 'id', type: 'string', required: true },
-          {
-            name: 'status',
-            type: 'string',
-            enum: ['active', 'inactive', 'pending'],
-            required: false,
-          },
-          { name: 'priority', type: 'number', default: 1, required: false },
-          { name: 'enabled', type: 'boolean', default: true, required: false },
-          { name: 'createdAt', type: 'timestamp', required: true },
-        ],
-      },
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        {
+          name: 'status',
+          type: 'string',
+          enum: ['active', 'inactive', 'pending'],
+          required: false,
+        },
+        { name: 'priority', type: 'number', default: 1, required: false },
+        { name: 'enabled', type: 'boolean', default: true, required: false },
+        { name: 'createdAt', type: 'timestamp', required: true },
+      ],
     };
 
     const ok = validate(complexSchema);
@@ -225,19 +216,17 @@ test('Advanced Validation', async t => {
 
     const sortKeySchema = {
       schemaVersion: 1.0,
-      namespace: 'test.sortkey',
+      entityName: 'SortKey',
       description: 'Schema with sort key',
-      entity: {
-        primaryKey: {
-          partitionKey: 'userId',
-          sortKey: 'timestamp',
-        },
-        fields: [
-          { name: 'userId', type: 'string', required: true },
-          { name: 'timestamp', type: 'timestamp', required: true },
-          { name: 'data', type: 'string', required: false },
-        ],
+      primaryKey: {
+        partitionKey: 'userId',
+        sortKey: 'timestamp',
       },
+      fields: [
+        { name: 'userId', type: 'string', required: true },
+        { name: 'timestamp', type: 'timestamp', required: true },
+        { name: 'data', type: 'string', required: false },
+      ],
     };
 
     const ok = validate(sortKeySchema);
@@ -249,7 +238,7 @@ test('Advanced Validation', async t => {
 
     const annotatedSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.annotations',
+      entityName: 'test.annotations',
       description: 'Schema with field annotations',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -283,7 +272,7 @@ test('Error Handling & Edge Cases', async t => {
     // Test with missing required fields
     const missingRequired = {
       schemaVersion: 1.0,
-      namespace: 'test',
+      entityName: 'test',
       description: 'Missing required fields',
       // Missing entity
     };
@@ -306,7 +295,7 @@ test('Error Handling & Edge Cases', async t => {
     // Test empty enum array
     const emptyEnum = {
       schemaVersion: 1.0,
-      namespace: 'test',
+      entityName: 'test',
       description: 'Empty enum array',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -327,7 +316,7 @@ test('Error Handling & Edge Cases', async t => {
     // Test invalid primary key
     const invalidPrimaryKey = {
       schemaVersion: 1.0,
-      namespace: 'test',
+      entityName: 'test',
       description: 'Invalid primary key',
       entity: {
         primaryKey: {
@@ -348,7 +337,7 @@ test('Error Handling & Edge Cases', async t => {
     // Test invalid field names
     const invalidFieldNames = {
       schemaVersion: 1.0,
-      namespace: 'test',
+      entityName: 'test',
       description: 'Invalid field names',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -370,7 +359,7 @@ test('Validation Helper Functions', async t => {
     // Test with valid schema
     const validSchema = {
       schemaVersion: 1.0,
-      namespace: 'test',
+      entityName: 'test',
       description: 'Valid schema',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -388,7 +377,7 @@ test('Validation Helper Functions', async t => {
     // Test with missing entity
     const missingEntity = {
       schemaVersion: 1.0,
-      namespace: 'test',
+      entityName: 'test',
       description: 'Missing entity',
     };
 
@@ -406,7 +395,7 @@ test('Validation Helper Functions', async t => {
     // Test with empty entity
     const emptyEntity = {
       schemaVersion: 1.0,
-      namespace: 'test',
+      entityName: 'test',
       description: 'Empty entity',
       entity: {},
     };
@@ -421,7 +410,7 @@ test('Validation Helper Functions', async t => {
     // Test with entity but no fields
     const noFields = {
       schemaVersion: 1.0,
-      namespace: 'test',
+      entityName: 'test',
       description: 'No fields',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -519,7 +508,7 @@ test('Performance & Stress Testing', async t => {
     // Create schema with many fields
     const largeSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.large',
+      entityName: 'test.large',
       description: 'Large schema with many fields',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -556,7 +545,7 @@ test('Performance & Stress Testing', async t => {
     // Create schema with complex field annotations
     const complexSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.complex',
+      entityName: 'test.complex',
       description: 'Complex schema with custom field annotations',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -594,7 +583,7 @@ test('Field Constraints', async t => {
   await t.test('valid string constraints are accepted', async () => {
     const schemaWithStringConstraints = {
       schemaVersion: 1.0,
-      namespace: 'test.constraints',
+      entityName: 'test.constraints',
       description: 'Schema with string constraints',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -634,7 +623,7 @@ test('Field Constraints', async t => {
   await t.test('valid number constraints are accepted', async () => {
     const schemaWithNumberConstraints = {
       schemaVersion: 1.0,
-      namespace: 'test.constraints',
+      entityName: 'test.constraints',
       description: 'Schema with number constraints',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -671,7 +660,7 @@ test('Field Constraints', async t => {
   await t.test('string constraints on non-string field are rejected', async () => {
     const invalidSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.constraints',
+      entityName: 'test.constraints',
       description: 'Invalid: string constraints on number field',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -699,7 +688,7 @@ test('Field Constraints', async t => {
   await t.test('maxLength constraint on non-string field is rejected', async () => {
     const invalidSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.constraints',
+      entityName: 'test.constraints',
       description: 'Invalid: maxLength on boolean field',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -726,7 +715,7 @@ test('Field Constraints', async t => {
   await t.test('pattern constraint on non-string field is rejected', async () => {
     const invalidSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.constraints',
+      entityName: 'test.constraints',
       description: 'Invalid: pattern on timestamp field',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -753,7 +742,7 @@ test('Field Constraints', async t => {
   await t.test('number constraints on non-number field are rejected', async () => {
     const invalidSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.constraints',
+      entityName: 'test.constraints',
       description: 'Invalid: min/max on string field',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -780,7 +769,7 @@ test('Field Constraints', async t => {
   await t.test('max constraint on non-number field is rejected', async () => {
     const invalidSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.constraints',
+      entityName: 'test.constraints',
       description: 'Invalid: max on boolean field',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -807,7 +796,7 @@ test('Field Constraints', async t => {
   await t.test('minLength greater than maxLength is rejected', async () => {
     const invalidSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.constraints',
+      entityName: 'test.constraints',
       description: 'Invalid: minLength > maxLength',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -835,7 +824,7 @@ test('Field Constraints', async t => {
   await t.test('min greater than max is rejected', async () => {
     const invalidSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.constraints',
+      entityName: 'test.constraints',
       description: 'Invalid: min > max',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -863,7 +852,7 @@ test('Field Constraints', async t => {
   await t.test('invalid regex pattern is rejected', async () => {
     const invalidSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.constraints',
+      entityName: 'test.constraints',
       description: 'Invalid: bad regex pattern',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -890,7 +879,7 @@ test('Field Constraints', async t => {
   await t.test('negative minLength is rejected', async () => {
     const invalidSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.constraints',
+      entityName: 'test.constraints',
       description: 'Invalid: negative minLength',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -917,7 +906,7 @@ test('Field Constraints', async t => {
   await t.test('non-integer minLength is rejected', async () => {
     const invalidSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.constraints',
+      entityName: 'test.constraints',
       description: 'Invalid: non-integer minLength',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -944,7 +933,7 @@ test('Field Constraints', async t => {
   await t.test('custom annotations are preserved', async () => {
     const validSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.metadata',
+      entityName: 'test.metadata',
       description: 'Schema with custom annotations',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -971,7 +960,7 @@ test('Field Constraints', async t => {
   await t.test('combined constraints and annotations work', async () => {
     const validSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.combined',
+      entityName: 'test.combined',
       description: 'Schema with combined constraints and annotations',
       entity: {
         primaryKey: { partitionKey: 'id' },
@@ -1030,7 +1019,7 @@ test('Field Constraints', async t => {
   await t.test('schema without constraints still validates', async () => {
     const simpleSchema = {
       schemaVersion: 1.0,
-      namespace: 'test.simple',
+      entityName: 'test.simple',
       description: 'Simple schema without constraints',
       entity: {
         primaryKey: { partitionKey: 'id' },

@@ -34,37 +34,34 @@ npm install @chaim-tools/chaim-bprint-spec
 ```typescript
 import {
   SchemaData,
-  Entity,
   PrimaryKey,
   Field,
 } from '@chaim-tools/chaim-bprint-spec';
 
 const userSchema: SchemaData = {
-  schemaVersion: 'v1',
-  namespace: 'acme.users',
+  schemaVersion: 1.0,
+  entityName: 'User',
   description: 'User account information',
-  entity: {
-    primaryKey: {
-      partitionKey: 'userId',
-    },
-    fields: [
-      {
-        name: 'userId',
-        type: 'string',
-        required: true,
-      },
-      {
-        name: 'email',
-        type: 'string',
-        required: true,
-      },
-      {
-        name: 'isActive',
-        type: 'boolean',
-        default: true,
-      },
-    ],
+  primaryKey: {
+    partitionKey: 'userId',
   },
+  fields: [
+    {
+      name: 'userId',
+      type: 'string',
+      required: true,
+    },
+    {
+      name: 'email',
+      type: 'string',
+      required: true,
+    },
+    {
+      name: 'isActive',
+      type: 'boolean',
+      default: true,
+    },
+  ],
 };
 ```
 
@@ -87,17 +84,15 @@ try {
 
 ```json
 {
-  "schemaVersion": "v1",
-  "namespace": "acme.users",
+  "schemaVersion": 1.0,
+  "entityName": "User",
   "description": "User account information",
-  "entity": {
-    "primaryKey": { "partitionKey": "userId" },
-    "fields": [
-      { "name": "userId", "type": "string", "required": true },
-      { "name": "email", "type": "string", "required": true },
-      { "name": "isActive", "type": "boolean", "default": true }
-    ]
-  }
+  "primaryKey": { "partitionKey": "userId" },
+  "fields": [
+    { "name": "userId", "type": "string", "required": true },
+    { "name": "email", "type": "string", "required": true },
+    { "name": "isActive", "type": "boolean", "default": true }
+  ]
 }
 ```
 
@@ -105,37 +100,35 @@ try {
 
 ```json
 {
-  "schemaVersion": "v1",
-  "namespace": "acme.users",
+  "schemaVersion": 1.0,
+  "entityName": "User",
   "description": "User account information with field constraints",
-  "entity": {
-    "primaryKey": { "partitionKey": "userId" },
-    "fields": [
-      { "name": "userId", "type": "string", "required": true },
-      {
-        "name": "email",
-        "type": "string",
-        "required": true,
-        "constraints": {
-          "minLength": 5,
-          "maxLength": 254,
-          "pattern": "^[^@]+@[^@]+\\.[^@]+$"
-        }
-      },
-      {
-        "name": "membershipTier",
-        "type": "string",
-        "enum": ["bronze", "silver", "gold", "platinum"]
-      },
-      {
-        "name": "age",
-        "type": "number",
-        "constraints": { "min": 0, "max": 150 }
-      },
-      { "name": "isActive", "type": "boolean", "default": true },
-      { "name": "createdAt", "type": "timestamp", "required": true }
-    ]
-  }
+  "primaryKey": { "partitionKey": "userId" },
+  "fields": [
+    { "name": "userId", "type": "string", "required": true },
+    {
+      "name": "email",
+      "type": "string",
+      "required": true,
+      "constraints": {
+        "minLength": 5,
+        "maxLength": 254,
+        "pattern": "^[^@]+@[^@]+\\.[^@]+$"
+      }
+    },
+    {
+      "name": "membershipTier",
+      "type": "string",
+      "enum": ["bronze", "silver", "gold", "platinum"]
+    },
+    {
+      "name": "age",
+      "type": "number",
+      "constraints": { "min": 0, "max": 150 }
+    },
+    { "name": "isActive", "type": "boolean", "default": true },
+    { "name": "createdAt", "type": "timestamp", "required": true }
+  ]
 }
 ```
 
@@ -143,15 +136,16 @@ try {
 
 ### Required Fields
 
-- `schemaVersion` (string): Semantic or opaque version string
-- `namespace` (string): Logical namespace for entities
-- `description` (string): Human-readable description of the schema
-- `entity` (object): Single entity definition
-
-### Entity Requirements
-
-- `primaryKey.partitionKey` (string): Required partition key
+- `schemaVersion` (number): Schema version number (e.g., 1.0, 2.0)
+- `entityName` (string): Entity name (e.g., "User", "Order", "Product")
+- `description` (string): Human-readable description of the entity
+- `primaryKey` (object): Primary key definition with `partitionKey` and optional `sortKey`
 - `fields[]` (array): Array of field definitions (minimum 1)
+
+### Primary Key Requirements
+
+- `partitionKey` (string): Required partition key field name
+- `sortKey` (string, optional): Sort key field name for composite keys
 
 ### Field Constraints
 
@@ -166,7 +160,7 @@ try {
 - **Sort Keys**: Optional `sortKey` in primaryKey for composite keys
 - **Constraints**: Validation constraints for fields (`minLength`, `maxLength`, `pattern`, `min`, `max`)
 - **Annotations**: Extensible custom metadata for fields
-- **Descriptions**: Human-readable descriptions for entities and fields
+- **Descriptions**: Human-readable descriptions for fields
 
 ## Examples
 

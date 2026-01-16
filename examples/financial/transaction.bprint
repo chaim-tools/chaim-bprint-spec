@@ -1,25 +1,23 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "financial.banking.transaction",
+  "entityName": "Transaction",
   "description": "Financial transaction records and audit trail for banking services",
-  "entity": {
-    "primaryKey": { 
-      "partitionKey": "accountId",
-      "sortKey": "transactionId"
-    },
-    "fields": [
-      { "name": "transactionId", "type": "string", "required": true },
-      { "name": "accountId", "type": "string", "required": true },
-      { "name": "transactionType", "type": "string", "enum": ["deposit", "withdrawal", "transfer", "payment", "fee"], "required": true },
-      { "name": "amount", "type": "number", "required": true },
-      { "name": "currency", "type": "string", "required": false, "default": "USD" },
-      { "name": "description", "type": "string", "required": false },
-      { "name": "status", "type": "string", "enum": ["pending", "completed", "failed", "cancelled"], "required": true },
-      { "name": "timestamp", "type": "timestamp", "required": true },
-      { "name": "referenceNumber", "type": "string", "required": false },
-      { "name": "merchantId", "type": "string", "required": false },
-      { "name": "location", "type": "string", "required": false },
-      { "name": "riskScore", "type": "number", "required": false }
-    ]
-  }
+  "primaryKey": { 
+    "partitionKey": "accountId",
+    "sortKey": "transactionId"
+  },
+  "fields": [
+    { "name": "transactionId", "type": "string", "required": true },
+    { "name": "accountId", "type": "string", "required": true },
+    { "name": "transactionType", "type": "string", "enum": ["deposit", "withdrawal", "transfer", "payment", "fee"], "required": true },
+    { "name": "amount", "type": "number", "required": true },
+    { "name": "currency", "type": "string", "required": false, "default": "USD" },
+    { "name": "description", "type": "string", "required": false },
+    { "name": "status", "type": "string", "enum": ["pending", "completed", "failed", "cancelled"], "required": true },
+    { "name": "timestamp", "type": "timestamp", "required": true },
+    { "name": "referenceNumber", "type": "string", "required": false },
+    { "name": "merchantId", "type": "string", "required": false },
+    { "name": "location", "type": "string", "required": false },
+    { "name": "riskScore", "type": "number", "required": false }
+  ]
 }

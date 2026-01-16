@@ -1,19 +1,17 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "ecommerce.store.inventory",
+  "entityName": "Inventory",
   "description": "Product inventory tracking across warehouses for e-commerce platform",
-  "entity": {
-    "primaryKey": { 
-      "partitionKey": "productId",
-      "sortKey": "warehouseId"
-    },
-    "fields": [
-      { "name": "productId", "type": "string", "required": true },
-      { "name": "warehouseId", "type": "string", "required": true },
-      { "name": "quantity", "type": "number", "required": true },
-      { "name": "reservedQuantity", "type": "number", "required": false, "default": 0 },
-      { "name": "reorderPoint", "type": "number", "required": false, "default": 10 },
-      { "name": "lastUpdated", "type": "timestamp", "required": true }
-    ]
-  }
+  "primaryKey": { 
+    "partitionKey": "productId",
+    "sortKey": "warehouseId"
+  },
+  "fields": [
+    { "name": "productId", "type": "string", "required": true },
+    { "name": "warehouseId", "type": "string", "required": true },
+    { "name": "quantity", "type": "number", "required": true },
+    { "name": "reservedQuantity", "type": "number", "required": false, "default": 0 },
+    { "name": "reorderPoint", "type": "number", "required": false, "default": 10 },
+    { "name": "lastUpdated", "type": "timestamp", "required": true }
+  ]
 }

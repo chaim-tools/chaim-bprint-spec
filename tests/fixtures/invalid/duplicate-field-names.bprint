@@ -1,14 +1,10 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "acme.orders",
+  "entityName": "Order",
   "description": "Order with duplicate field names",
-  "entity": {
-    "primaryKey": { "partitionKey": "orderId" },
-    "fields": [
-      { "name": "orderId", "type": "string", "required": true },
-      { "name": "orderId", "type": "string", "required": true }
-    ]
-  }
+  "primaryKey": { "partitionKey": "orderId" },
+  "fields": [
+    { "name": "orderId", "type": "string", "required": true },
+    { "name": "orderId", "type": "string", "required": true }
+  ]
 }
-
-

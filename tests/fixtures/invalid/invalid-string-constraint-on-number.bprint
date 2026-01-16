@@ -1,24 +1,21 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "test.invalid",
+  "entityName": "Invalid",
   "description": "Invalid: minLength constraint on number field",
-  "entity": {
-    "primaryKey": { "partitionKey": "id" },
-    "fields": [
-      {
-        "name": "id",
-        "type": "string",
-        "required": true
-      },
-      {
-        "name": "quantity",
-        "type": "number",
-        "required": true,
-        "constraints": {
-          "minLength": 5
-        }
+  "primaryKey": { "partitionKey": "id" },
+  "fields": [
+    {
+      "name": "id",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "quantity",
+      "type": "number",
+      "required": true,
+      "constraints": {
+        "minLength": 5
       }
-    ]
-  }
+    }
+  ]
 }
-

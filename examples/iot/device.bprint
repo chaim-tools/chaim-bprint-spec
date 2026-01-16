@@ -1,23 +1,20 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "iot.sensors.device",
+  "entityName": "Device",
   "description": "IoT device registration and metadata for sensor management",
-  "entity": {
-    "primaryKey": { "partitionKey": "deviceId" },
-    "fields": [
-      { "name": "deviceId", "type": "string", "required": true },
-      { "name": "deviceType", "type": "string", "enum": ["temperature", "humidity", "pressure", "motion", "camera", "gps"], "required": true },
-      { "name": "model", "type": "string", "required": true },
-      { "name": "manufacturer", "type": "string", "required": true },
-      { "name": "firmwareVersion", "type": "string", "required": true },
-      { "name": "location", "type": "string", "required": true },
-      { "name": "latitude", "type": "number", "required": false },
-      { "name": "longitude", "type": "number", "required": false },
-      { "name": "status", "type": "string", "enum": ["online", "offline", "maintenance", "error"], "required": true },
-      { "name": "lastSeen", "type": "timestamp", "required": true },
-      { "name": "createdAt", "type": "timestamp", "required": true },
-      { "name": "metadata", "type": "string", "required": false }
-    ]
-  }
+  "primaryKey": { "partitionKey": "deviceId" },
+  "fields": [
+    { "name": "deviceId", "type": "string", "required": true },
+    { "name": "deviceType", "type": "string", "enum": ["temperature", "humidity", "pressure", "motion", "camera", "gps"], "required": true },
+    { "name": "model", "type": "string", "required": true },
+    { "name": "manufacturer", "type": "string", "required": true },
+    { "name": "firmwareVersion", "type": "string", "required": true },
+    { "name": "location", "type": "string", "required": true },
+    { "name": "latitude", "type": "number", "required": false },
+    { "name": "longitude", "type": "number", "required": false },
+    { "name": "status", "type": "string", "enum": ["online", "offline", "maintenance", "error"], "required": true },
+    { "name": "lastSeen", "type": "timestamp", "required": true },
+    { "name": "createdAt", "type": "timestamp", "required": true },
+    { "name": "metadata", "type": "string", "required": false }
+  ]
 }
-

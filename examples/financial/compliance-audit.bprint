@@ -1,23 +1,21 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "financial.banking.compliance-audit",
+  "entityName": "ComplianceAudit",
   "description": "Compliance and audit trail for regulatory requirements in financial services",
-  "entity": {
-    "primaryKey": { 
-      "partitionKey": "auditId",
-      "sortKey": "timestamp"
-    },
-    "fields": [
-      { "name": "auditId", "type": "string", "required": true },
-      { "name": "timestamp", "type": "timestamp", "required": true },
-      { "name": "userId", "type": "string", "required": true },
-      { "name": "action", "type": "string", "required": true },
-      { "name": "resourceType", "type": "string", "required": true },
-      { "name": "resourceId", "type": "string", "required": true },
-      { "name": "details", "type": "string", "required": false },
-      { "name": "ipAddress", "type": "string", "required": false },
-      { "name": "userAgent", "type": "string", "required": false },
-      { "name": "complianceCheck", "type": "string", "enum": ["passed", "failed", "warning"], "required": false }
-    ]
-  }
+  "primaryKey": { 
+    "partitionKey": "auditId",
+    "sortKey": "timestamp"
+  },
+  "fields": [
+    { "name": "auditId", "type": "string", "required": true },
+    { "name": "timestamp", "type": "timestamp", "required": true },
+    { "name": "userId", "type": "string", "required": true },
+    { "name": "action", "type": "string", "required": true },
+    { "name": "resourceType", "type": "string", "required": true },
+    { "name": "resourceId", "type": "string", "required": true },
+    { "name": "details", "type": "string", "required": false },
+    { "name": "ipAddress", "type": "string", "required": false },
+    { "name": "userAgent", "type": "string", "required": false },
+    { "name": "complianceCheck", "type": "string", "enum": ["passed", "failed", "warning"], "required": false }
+  ]
 }

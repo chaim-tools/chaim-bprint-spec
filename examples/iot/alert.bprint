@@ -1,24 +1,22 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "iot.sensors.alert",
+  "entityName": "Alert",
   "description": "Device alerts and notifications for IoT sensor management",
-  "entity": {
-    "primaryKey": { 
-      "partitionKey": "deviceId",
-      "sortKey": "alertId"
-    },
-    "fields": [
-      { "name": "alertId", "type": "string", "required": true },
-      { "name": "deviceId", "type": "string", "required": true },
-      { "name": "alertType", "type": "string", "enum": ["threshold_exceeded", "device_offline", "maintenance_due", "error_detected"], "required": true },
-      { "name": "severity", "type": "string", "enum": ["low", "medium", "high", "critical"], "required": true },
-      { "name": "message", "type": "string", "required": true },
-      { "name": "timestamp", "type": "timestamp", "required": true },
-      { "name": "acknowledged", "type": "boolean", "required": false, "default": false },
-      { "name": "acknowledgedBy", "type": "string", "required": false },
-      { "name": "acknowledgedAt", "type": "timestamp", "required": false },
-      { "name": "resolved", "type": "boolean", "required": false, "default": false },
-      { "name": "resolvedAt", "type": "timestamp", "required": false }
-    ]
-  }
+  "primaryKey": { 
+    "partitionKey": "deviceId",
+    "sortKey": "alertId"
+  },
+  "fields": [
+    { "name": "alertId", "type": "string", "required": true },
+    { "name": "deviceId", "type": "string", "required": true },
+    { "name": "alertType", "type": "string", "enum": ["threshold_exceeded", "device_offline", "maintenance_due", "error_detected"], "required": true },
+    { "name": "severity", "type": "string", "enum": ["low", "medium", "high", "critical"], "required": true },
+    { "name": "message", "type": "string", "required": true },
+    { "name": "timestamp", "type": "timestamp", "required": true },
+    { "name": "acknowledged", "type": "boolean", "required": false, "default": false },
+    { "name": "acknowledgedBy", "type": "string", "required": false },
+    { "name": "acknowledgedAt", "type": "timestamp", "required": false },
+    { "name": "resolved", "type": "boolean", "required": false, "default": false },
+    { "name": "resolvedAt", "type": "timestamp", "required": false }
+  ]
 }

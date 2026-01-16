@@ -3,44 +3,34 @@
   "$id": "https://chaim.dev/schemas/bprint.schema.json",
   "title": "Chaim Blueprint (.bprint)",
   "type": "object",
-  "required": ["schemaVersion", "namespace", "description", "entity"],
+  "required": ["schemaVersion", "entityName", "description", "primaryKey", "fields"],
   "additionalProperties": false,
   "properties": {
     "schemaVersion": {
       "type": "number",
       "description": "Schema version number (e.g., 1.0, 2.0)."
     },
-    "namespace": {
+    "entityName": {
       "type": "string",
       "minLength": 1,
-      "description": "Logical namespace for entities (e.g., 'acme.orders')."
+      "description": "Entity name (e.g., 'Customer', 'Order', 'Product')."
     },
     "description": {
       "type": "string",
-      "description": "Description of the database schema and its purpose."
+      "description": "Description of the entity and its purpose."
     },
-    "entity": {
-      "$ref": "#/$defs/entity"
+    "primaryKey": {
+      "$ref": "#/$defs/primaryKey"
+    },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/field"
+      }
     }
   },
   "$defs": {
-    "entity": {
-      "type": "object",
-      "required": ["primaryKey", "fields"],
-      "additionalProperties": false,
-      "properties": {
-        "primaryKey": {
-          "$ref": "#/$defs/primaryKey"
-        },
-        "fields": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/field"
-          }
-        }
-      }
-    },
     "primaryKey": {
       "type": "object",
       "required": ["partitionKey"],

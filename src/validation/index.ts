@@ -1,6 +1,5 @@
 import {
   SchemaData,
-  Entity,
   PrimaryKey,
   Field,
   FieldConstraints,
@@ -14,40 +13,28 @@ export function validateSchema(schema: any): SchemaData {
   if (!schema.schemaVersion) {
     throw new Error('Schema must include schemaVersion field');
   }
-  if (!schema.namespace) {
-    throw new Error('Schema must include namespace field');
+  if (!schema.entityName) {
+    throw new Error('Schema must include entityName field');
   }
   if (!schema.description) {
     throw new Error('Schema must include description field');
   }
-  if (!schema.entity) {
-    throw new Error('Schema must include entity field');
+  if (!schema.primaryKey) {
+    throw new Error('Schema must include primaryKey field');
+  }
+  if (!Array.isArray(schema.fields) || schema.fields.length === 0) {
+    throw new Error('Schema must include fields array with at least one field');
   }
 
-  // Validate entity structure
-  const entity = validateEntity(schema.entity);
+  // Validate primary key and fields
+  const primaryKey = validatePrimaryKey(schema.primaryKey);
+  const fields = validateFields(schema.fields);
 
   // Return validated schema
   return {
     schemaVersion: schema.schemaVersion,
-    namespace: schema.namespace,
+    entityName: schema.entityName,
     description: schema.description,
-    entity,
-  };
-}
-
-function validateEntity(entity: any): Entity {
-  if (!entity.primaryKey) {
-    throw new Error('Entity must include primaryKey field');
-  }
-  if (!Array.isArray(entity.fields) || entity.fields.length === 0) {
-    throw new Error('Entity must include fields array with at least one field');
-  }
-
-  const primaryKey = validatePrimaryKey(entity.primaryKey);
-  const fields = validateFields(entity.fields);
-
-  return {
     primaryKey,
     fields,
   };
