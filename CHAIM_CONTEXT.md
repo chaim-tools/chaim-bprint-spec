@@ -3,7 +3,7 @@
 **Purpose**: Structured context for AI agents to understand and work with the chaim-bprint-spec codebase.
 
 **Package**: `@chaim-tools/chaim-bprint-spec`  
-**Version**: 0.1.1  
+**Version**: 0.2.1  
 **License**: Apache-2.0
 
 ---
