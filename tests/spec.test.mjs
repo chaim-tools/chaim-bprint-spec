@@ -25,6 +25,7 @@ test('Schema Validation', async t => {
       'tests/fixtures/valid/orders.bprint',
       'tests/fixtures/valid/users.bprint',
       'tests/fixtures/valid/products.bprint',
+      'tests/fixtures/valid/order-with-collections.bprint',
     ];
 
     for (const fixture of validFixtures) {
@@ -1293,6 +1294,431 @@ test('nameOverride TypeScript Validation', async t => {
         `Should reject '${word}' as nameOverride`
       );
     }
+  });
+});
+
+// Test suite for collection types (list, map, stringSet, numberSet)
+test('Collection Types - JSON Schema Validation', async t => {
+  await t.test('list of strings is valid', async () => {
+    const validate = await loadSchema();
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity with list',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        { name: 'tags', type: 'list', items: { type: 'string' } },
+      ],
+    };
+    const ok = validate(schema);
+    if (!ok) console.error('Validation errors:', validate.errors);
+    assert.equal(ok, true, 'List of strings should be valid');
+  });
+
+  await t.test('list of numbers is valid', async () => {
+    const validate = await loadSchema();
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        { name: 'scores', type: 'list', items: { type: 'number' } },
+      ],
+    };
+    const ok = validate(schema);
+    assert.equal(ok, true, 'List of numbers should be valid');
+  });
+
+  await t.test('list of maps is valid', async () => {
+    const validate = await loadSchema();
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Order',
+      description: 'Order with line items',
+      primaryKey: { partitionKey: 'orderId' },
+      fields: [
+        { name: 'orderId', type: 'string', required: true },
+        {
+          name: 'lineItems',
+          type: 'list',
+          items: {
+            type: 'map',
+            fields: [
+              { name: 'productId', type: 'string' },
+              { name: 'quantity', type: 'number' },
+            ],
+          },
+        },
+      ],
+    };
+    const ok = validate(schema);
+    if (!ok) console.error('Validation errors:', validate.errors);
+    assert.equal(ok, true, 'List of maps should be valid');
+  });
+
+  await t.test('standalone map is valid', async () => {
+    const validate = await loadSchema();
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Config',
+      description: 'Config entity with map',
+      primaryKey: { partitionKey: 'configId' },
+      fields: [
+        { name: 'configId', type: 'string', required: true },
+        {
+          name: 'metadata',
+          type: 'map',
+          fields: [
+            { name: 'source', type: 'string' },
+            { name: 'version', type: 'number' },
+          ],
+        },
+      ],
+    };
+    const ok = validate(schema);
+    if (!ok) console.error('Validation errors:', validate.errors);
+    assert.equal(ok, true, 'Standalone map should be valid');
+  });
+
+  await t.test('stringSet is valid', async () => {
+    const validate = await loadSchema();
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'User',
+      description: 'User with roles',
+      primaryKey: { partitionKey: 'userId' },
+      fields: [
+        { name: 'userId', type: 'string', required: true },
+        { name: 'roles', type: 'stringSet' },
+      ],
+    };
+    const ok = validate(schema);
+    assert.equal(ok, true, 'stringSet should be valid');
+  });
+
+  await t.test('numberSet is valid', async () => {
+    const validate = await loadSchema();
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Score',
+      description: 'Score with tiers',
+      primaryKey: { partitionKey: 'scoreId' },
+      fields: [
+        { name: 'scoreId', type: 'string', required: true },
+        { name: 'tiers', type: 'numberSet' },
+      ],
+    };
+    const ok = validate(schema);
+    assert.equal(ok, true, 'numberSet should be valid');
+  });
+
+  await t.test('list without items is rejected', async () => {
+    const validate = await loadSchema();
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        { name: 'tags', type: 'list' },
+      ],
+    };
+    const ok = validate(schema);
+    assert.equal(ok, false, 'List without items should be rejected');
+  });
+
+  await t.test('map without fields is rejected', async () => {
+    const validate = await loadSchema();
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        { name: 'metadata', type: 'map' },
+      ],
+    };
+    const ok = validate(schema);
+    assert.equal(ok, false, 'Map without fields should be rejected');
+  });
+
+  await t.test('list-of-list is rejected (no list in items type)', async () => {
+    const validate = await loadSchema();
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        { name: 'nested', type: 'list', items: { type: 'list' } },
+      ],
+    };
+    const ok = validate(schema);
+    assert.equal(ok, false, 'List-of-list should be rejected');
+  });
+
+  await t.test('collection type fixture passes validation', async () => {
+    const validate = await loadSchema();
+    const fixture = await loadFixture('tests/fixtures/valid/order-with-collections.bprint');
+    const ok = validate(fixture);
+    if (!ok) console.error('Validation errors:', validate.errors);
+    assert.equal(ok, true, 'order-with-collections fixture should be valid');
+  });
+});
+
+// Test suite for collection types - TypeScript validation
+test('Collection Types - TypeScript Validation', async t => {
+  const { validateSchema } = await import('../dist/src/index.js');
+
+  await t.test('list of strings passes TS validation', async () => {
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity with list',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        { name: 'tags', type: 'list', items: { type: 'string' } },
+      ],
+    };
+    const validated = validateSchema(schema);
+    assert.ok(validated, 'List of strings should pass TS validation');
+    assert.equal(validated.fields[1].type, 'list');
+    assert.equal(validated.fields[1].items.type, 'string');
+  });
+
+  await t.test('list of maps passes TS validation with nested fields', async () => {
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Order',
+      description: 'Order entity',
+      primaryKey: { partitionKey: 'orderId' },
+      fields: [
+        { name: 'orderId', type: 'string', required: true },
+        {
+          name: 'addresses',
+          type: 'list',
+          items: {
+            type: 'map',
+            fields: [
+              { name: 'street', type: 'string' },
+              { name: 'city', type: 'string' },
+              { name: 'zip', type: 'string' },
+            ],
+          },
+        },
+      ],
+    };
+    const validated = validateSchema(schema);
+    assert.ok(validated, 'List of maps should pass TS validation');
+    assert.equal(validated.fields[1].items.type, 'map');
+    assert.equal(validated.fields[1].items.fields.length, 3);
+    assert.equal(validated.fields[1].items.fields[0].name, 'street');
+  });
+
+  await t.test('standalone map passes TS validation', async () => {
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Config',
+      description: 'Config entity',
+      primaryKey: { partitionKey: 'configId' },
+      fields: [
+        { name: 'configId', type: 'string', required: true },
+        {
+          name: 'metadata',
+          type: 'map',
+          fields: [
+            { name: 'source', type: 'string' },
+            { name: 'version', type: 'number' },
+          ],
+        },
+      ],
+    };
+    const validated = validateSchema(schema);
+    assert.ok(validated, 'Map should pass TS validation');
+    assert.equal(validated.fields[1].type, 'map');
+    assert.equal(validated.fields[1].fields.length, 2);
+  });
+
+  await t.test('list without items is rejected by TS validation', async () => {
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        { name: 'tags', type: 'list' },
+      ],
+    };
+    assert.throws(
+      () => validateSchema(schema),
+      /must include an 'items' definition/,
+      'List without items should be rejected by TS validation'
+    );
+  });
+
+  await t.test('map without fields is rejected by TS validation', async () => {
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        { name: 'metadata', type: 'map' },
+      ],
+    };
+    assert.throws(
+      () => validateSchema(schema),
+      /must include a non-empty 'fields' array/,
+      'Map without fields should be rejected by TS validation'
+    );
+  });
+
+  await t.test('list-of-map without nested fields is rejected', async () => {
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        { name: 'items', type: 'list', items: { type: 'map' } },
+      ],
+    };
+    assert.throws(
+      () => validateSchema(schema),
+      /must include a non-empty 'fields' array/,
+      'List of map without fields should be rejected'
+    );
+  });
+
+  await t.test('constraints on collection type are rejected', async () => {
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        { name: 'tags', type: 'list', items: { type: 'string' }, constraints: { minLength: 1 } },
+      ],
+    };
+    assert.throws(
+      () => validateSchema(schema),
+      /cannot have constraints/,
+      'Constraints on list type should be rejected'
+    );
+  });
+
+  await t.test('default on collection type is rejected', async () => {
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        { name: 'roles', type: 'stringSet', default: 'admin' },
+      ],
+    };
+    assert.throws(
+      () => validateSchema(schema),
+      /cannot have a default value/,
+      'Default on stringSet should be rejected'
+    );
+  });
+
+  await t.test('enum on collection type is rejected', async () => {
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        { name: 'data', type: 'numberSet', enum: ['a'] },
+      ],
+    };
+    assert.throws(
+      () => validateSchema(schema),
+      /cannot have enum values/,
+      'Enum on numberSet should be rejected'
+    );
+  });
+
+  await t.test('duplicate nested field names are rejected', async () => {
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        {
+          name: 'addr',
+          type: 'map',
+          fields: [
+            { name: 'street', type: 'string' },
+            { name: 'street', type: 'string' },
+          ],
+        },
+      ],
+    };
+    assert.throws(
+      () => validateSchema(schema),
+      /Duplicate nested field name/,
+      'Duplicate nested field names should be rejected'
+    );
+  });
+
+  await t.test('invalid nested field type is rejected', async () => {
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        {
+          name: 'addr',
+          type: 'map',
+          fields: [
+            { name: 'data', type: 'list' },
+          ],
+        },
+      ],
+    };
+    assert.throws(
+      () => validateSchema(schema),
+      /must have a valid type/,
+      'Nested field with non-scalar type should be rejected'
+    );
+  });
+
+  await t.test('required field on collection type is valid', async () => {
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        { name: 'tags', type: 'list', items: { type: 'string' }, required: true },
+        { name: 'roles', type: 'stringSet', required: true },
+      ],
+    };
+    const validated = validateSchema(schema);
+    assert.ok(validated, 'Required on collection types should be allowed');
+    assert.equal(validated.fields[1].required, true);
+    assert.equal(validated.fields[2].required, true);
   });
 });
 

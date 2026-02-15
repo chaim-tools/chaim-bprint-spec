@@ -62,7 +62,7 @@
         },
         "type": {
           "type": "string",
-          "enum": ["string", "number", "boolean", "timestamp"]
+          "enum": ["string", "number", "boolean", "timestamp", "list", "map", "stringSet", "numberSet"]
         },
         "required": {
           "type": "boolean",
@@ -114,6 +114,56 @@
           "type": "object",
           "description": "Extensible metadata annotations for the field",
           "additionalProperties": true
+        },
+        "items": {
+          "type": "object",
+          "description": "Element type definition for list fields",
+          "required": ["type"],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["string", "number", "boolean", "timestamp", "map"]
+            },
+            "fields": {
+              "type": "array",
+              "description": "Nested fields when items type is map",
+              "items": { "$ref": "#/$defs/nestedField" },
+              "minItems": 1
+            }
+          }
+        },
+        "fields": {
+          "type": "array",
+          "description": "Nested field definitions for map type fields",
+          "items": { "$ref": "#/$defs/nestedField" },
+          "minItems": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "list" } }, "required": ["type"] },
+          "then": { "required": ["items"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "map" } }, "required": ["type"] },
+          "then": { "required": ["fields"] }
+        }
+      ]
+    },
+    "nestedField": {
+      "type": "object",
+      "description": "Simplified field definition for nested map structures (name + type only)",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "enum": ["string", "number", "boolean", "timestamp"]
         }
       }
     }

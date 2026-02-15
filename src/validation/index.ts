@@ -3,6 +3,8 @@ import {
   PrimaryKey,
   Field,
   FieldConstraints,
+  ListItems,
+  NestedField,
 } from '../types';
 
 /**
@@ -32,6 +34,11 @@ const RESERVED_WORDS = new Set<string>([
   'chan', 'defer', 'fallthrough', 'func', 'go', 'map', 'range', 'select',
   'struct', 'type', 'var',
 ]);
+
+const SCALAR_TYPES = ['string', 'number', 'boolean', 'timestamp'];
+const COLLECTION_TYPES = ['list', 'map', 'stringSet', 'numberSet'];
+const ALL_FIELD_TYPES = [...SCALAR_TYPES, ...COLLECTION_TYPES];
+const LIST_ITEM_TYPES = [...SCALAR_TYPES, 'map'];
 
 /**
  * Validates a schema object against the official chaim-bprint-spec
@@ -89,10 +96,10 @@ function validateFields(fields: any[]): Field[] {
     }
     if (
       !field.type ||
-      !['string', 'number', 'boolean', 'timestamp'].includes(field.type)
+      !ALL_FIELD_TYPES.includes(field.type)
     ) {
       throw new Error(
-        `Field '${field.name}' must have a valid type: string, number, boolean, or timestamp`
+        `Field '${field.name}' must have a valid type: ${ALL_FIELD_TYPES.join(', ')}`
       );
     }
 
@@ -121,7 +128,28 @@ function validateFields(fields: any[]): Field[] {
       }
     }
 
-    // Validate enum values if present
+    const isCollection = COLLECTION_TYPES.includes(field.type);
+
+    // Reject default, enum, constraints on collection types
+    if (isCollection) {
+      if (field.default !== undefined) {
+        throw new Error(
+          `Field '${field.name}' of type '${field.type}' cannot have a default value`
+        );
+      }
+      if (field.enum) {
+        throw new Error(
+          `Field '${field.name}' of type '${field.type}' cannot have enum values`
+        );
+      }
+      if (field.constraints) {
+        throw new Error(
+          `Field '${field.name}' of type '${field.type}' cannot have constraints`
+        );
+      }
+    }
+
+    // Validate enum values if present (scalar types only)
     if (field.enum && (!Array.isArray(field.enum) || field.enum.length === 0)) {
       throw new Error(`Field '${field.name}' enum must be a non-empty array`);
     }
@@ -141,6 +169,28 @@ function validateFields(fields: any[]): Field[] {
       validateFieldConstraints(field.name, field.type, field.constraints);
     }
 
+    // Validate list type: items is required
+    let validatedItems: ListItems | undefined;
+    if (field.type === 'list') {
+      if (!field.items || typeof field.items !== 'object') {
+        throw new Error(
+          `Field '${field.name}' of type 'list' must include an 'items' definition`
+        );
+      }
+      validatedItems = validateListItems(field.name, field.items);
+    }
+
+    // Validate map type: fields is required
+    let validatedNestedFields: NestedField[] | undefined;
+    if (field.type === 'map') {
+      if (!Array.isArray(field.fields) || field.fields.length === 0) {
+        throw new Error(
+          `Field '${field.name}' of type 'map' must include a non-empty 'fields' array`
+        );
+      }
+      validatedNestedFields = validateNestedFields(field.name, field.fields);
+    }
+
     validatedFields.push({
       name: field.name,
       nameOverride: field.nameOverride,
@@ -151,10 +201,70 @@ function validateFields(fields: any[]): Field[] {
       description: field.description,
       constraints: field.constraints,
       annotations: field.annotations,
+      items: validatedItems,
+      fields: validatedNestedFields,
     });
   }
 
   return validatedFields;
+}
+
+/**
+ * Validate the items definition for a list field.
+ */
+function validateListItems(fieldName: string, items: any): ListItems {
+  if (!items.type || !LIST_ITEM_TYPES.includes(items.type)) {
+    throw new Error(
+      `Field '${fieldName}' items must have a valid type: ${LIST_ITEM_TYPES.join(', ')}`
+    );
+  }
+
+  let validatedFields: NestedField[] | undefined;
+  if (items.type === 'map') {
+    if (!Array.isArray(items.fields) || items.fields.length === 0) {
+      throw new Error(
+        `Field '${fieldName}' items of type 'map' must include a non-empty 'fields' array`
+      );
+    }
+    validatedFields = validateNestedFields(fieldName, items.fields);
+  }
+
+  return {
+    type: items.type,
+    fields: validatedFields,
+  };
+}
+
+/**
+ * Validate nested field definitions for map types.
+ * Nested fields only support name + scalar type (no constraints, annotations, etc.).
+ */
+function validateNestedFields(parentFieldName: string, fields: any[]): NestedField[] {
+  const nestedNames = new Set<string>();
+  const validated: NestedField[] = [];
+
+  for (const nf of fields) {
+    if (!nf.name || typeof nf.name !== 'string') {
+      throw new Error(
+        `Nested field in '${parentFieldName}' must include name as a string`
+      );
+    }
+    if (!nf.type || !SCALAR_TYPES.includes(nf.type)) {
+      throw new Error(
+        `Nested field '${nf.name}' in '${parentFieldName}' must have a valid type: ${SCALAR_TYPES.join(', ')}`
+      );
+    }
+    if (nestedNames.has(nf.name)) {
+      throw new Error(
+        `Duplicate nested field name '${nf.name}' in '${parentFieldName}'`
+      );
+    }
+    nestedNames.add(nf.name);
+
+    validated.push({ name: nf.name, type: nf.type });
+  }
+
+  return validated;
 }
 
 /**

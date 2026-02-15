@@ -1,5 +1,5 @@
 // Export the main types
-export { SchemaData, PrimaryKey, Field, FieldConstraints, FieldAnnotations } from './types';
+export { SchemaData, PrimaryKey, Field, FieldType, ListItems, NestedField, FieldConstraints, FieldAnnotations } from './types';
 
 // Export validation functions
 export { validateSchema } from './validation';
