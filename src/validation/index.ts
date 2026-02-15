@@ -6,6 +6,34 @@ import {
 } from '../types';
 
 /**
+ * Regex for a valid identifier in all supported target languages.
+ */
+const VALID_IDENTIFIER_REGEX = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+
+/**
+ * Reserved keywords across supported target languages.
+ * nameOverride must not collide with these.
+ */
+const RESERVED_WORDS = new Set<string>([
+  // Java reserved keywords
+  'abstract', 'assert', 'boolean', 'break', 'byte', 'case', 'catch', 'char',
+  'class', 'const', 'continue', 'default', 'do', 'double', 'else', 'enum',
+  'extends', 'final', 'finally', 'float', 'for', 'goto', 'if', 'implements',
+  'import', 'instanceof', 'int', 'interface', 'long', 'native', 'new',
+  'package', 'private', 'protected', 'public', 'return', 'short', 'static',
+  'strictfp', 'super', 'switch', 'synchronized', 'this', 'throw', 'throws',
+  'transient', 'try', 'void', 'volatile', 'while',
+  // Java literals
+  'true', 'false', 'null',
+  // Python reserved keywords (for future generators)
+  'and', 'as', 'def', 'del', 'elif', 'except', 'from', 'global', 'in', 'is',
+  'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'with', 'yield',
+  // Go reserved keywords (for future generators)
+  'chan', 'defer', 'fallthrough', 'func', 'go', 'map', 'range', 'select',
+  'struct', 'type', 'var',
+]);
+
+/**
  * Validates a schema object against the official chaim-bprint-spec
  */
 export function validateSchema(schema: any): SchemaData {
@@ -74,6 +102,25 @@ function validateFields(fields: any[]): Field[] {
     }
     fieldNames.add(field.name);
 
+    // Validate nameOverride if present
+    if (field.nameOverride !== undefined && field.nameOverride !== null) {
+      if (typeof field.nameOverride !== 'string') {
+        throw new Error(
+          `Field '${field.name}' nameOverride must be a string`
+        );
+      }
+      if (!VALID_IDENTIFIER_REGEX.test(field.nameOverride)) {
+        throw new Error(
+          `Field '${field.name}' nameOverride '${field.nameOverride}' is not a valid identifier. Must match ${VALID_IDENTIFIER_REGEX}`
+        );
+      }
+      if (RESERVED_WORDS.has(field.nameOverride)) {
+        throw new Error(
+          `Field '${field.name}' nameOverride '${field.nameOverride}' is a reserved keyword`
+        );
+      }
+    }
+
     // Validate enum values if present
     if (field.enum && (!Array.isArray(field.enum) || field.enum.length === 0)) {
       throw new Error(`Field '${field.name}' enum must be a non-empty array`);
@@ -96,6 +143,7 @@ function validateFields(fields: any[]): Field[] {
 
     validatedFields.push({
       name: field.name,
+      nameOverride: field.nameOverride,
       type: field.type,
       required: field.required ?? false,
       default: field.default,

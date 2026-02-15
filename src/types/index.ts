@@ -17,6 +17,7 @@ export interface PrimaryKey {
 
 export interface Field {
   name: string;
+  nameOverride?: string;
   type: 'string' | 'number' | 'boolean' | 'timestamp';
   required?: boolean;
   default?: string | number | boolean;

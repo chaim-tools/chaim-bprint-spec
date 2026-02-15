@@ -989,6 +989,313 @@ test('Field Constraints', async t => {
   });
 });
 
+// Test suite for nameOverride validation
+test('nameOverride Validation', async t => {
+  await t.test('valid nameOverride passes JSON schema validation', async () => {
+    const validate = await loadSchema();
+
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Order',
+      description: 'Order with nameOverride',
+      primaryKey: { partitionKey: 'order-id' },
+      fields: [
+        { name: 'order-id', type: 'string', required: true },
+        {
+          name: '2fa-verified',
+          nameOverride: 'twoFactorVerified',
+          type: 'boolean',
+          required: false,
+        },
+      ],
+    };
+
+    const ok = validate(schema);
+    if (!ok) {
+      console.error('Validation errors:', validate.errors);
+    }
+    assert.equal(ok, true, 'Schema with valid nameOverride should pass');
+  });
+
+  await t.test('nameOverride with hyphens is rejected by JSON schema', async () => {
+    const validate = await loadSchema();
+
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        {
+          name: 'some-field',
+          nameOverride: 'some-field',
+          type: 'string',
+          required: false,
+        },
+      ],
+    };
+
+    const ok = validate(schema);
+    assert.equal(ok, false, 'nameOverride with hyphens should be rejected');
+  });
+
+  await t.test('nameOverride with leading digit is rejected by JSON schema', async () => {
+    const validate = await loadSchema();
+
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        {
+          name: '2fa',
+          nameOverride: '2fa',
+          type: 'string',
+          required: false,
+        },
+      ],
+    };
+
+    const ok = validate(schema);
+    assert.equal(ok, false, 'nameOverride with leading digit should be rejected');
+  });
+
+  await t.test('nameOverride with spaces is rejected by JSON schema', async () => {
+    const validate = await loadSchema();
+
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        {
+          name: 'some field',
+          nameOverride: 'some field',
+          type: 'string',
+          required: false,
+        },
+      ],
+    };
+
+    const ok = validate(schema);
+    assert.equal(ok, false, 'nameOverride with spaces should be rejected');
+  });
+
+  await t.test('missing nameOverride on clean name works (backward compat)', async () => {
+    const validate = await loadSchema();
+
+    const schema = {
+      schemaVersion: 1.0,
+      entityName: 'User',
+      description: 'User entity',
+      primaryKey: { partitionKey: 'userId' },
+      fields: [
+        { name: 'userId', type: 'string', required: true },
+        { name: 'email', type: 'string', required: true },
+      ],
+    };
+
+    const ok = validate(schema);
+    assert.equal(ok, true, 'Schema without nameOverride should still work');
+  });
+
+  await t.test('missing nameOverride on hyphenated name passes JSON schema', async () => {
+    const validate = await loadSchema();
+
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Order',
+      description: 'Order with hyphenated field names',
+      primaryKey: { partitionKey: 'order-id' },
+      fields: [
+        { name: 'order-id', type: 'string', required: true },
+        { name: 'order-date', type: 'timestamp', required: true },
+      ],
+    };
+
+    const ok = validate(schema);
+    assert.equal(ok, true, 'Hyphenated names without nameOverride should pass JSON schema');
+  });
+
+  await t.test('nameOverride with underscore prefix is valid', async () => {
+    const validate = await loadSchema();
+
+    const schema = {
+      schemaVersion: 1.1,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        {
+          name: '2fa-code',
+          nameOverride: '_2faCode',
+          type: 'string',
+          required: false,
+        },
+      ],
+    };
+
+    const ok = validate(schema);
+    assert.equal(ok, true, 'nameOverride starting with underscore should be valid');
+  });
+
+  await t.test('order-with-name-overrides fixture passes JSON schema validation', async () => {
+    const validate = await loadSchema();
+
+    const fixture = await loadFixture('tests/fixtures/valid/order-with-name-overrides.bprint');
+    const ok = validate(fixture);
+
+    if (!ok) {
+      console.error('Validation errors:', validate.errors);
+    }
+    assert.equal(ok, true, 'order-with-name-overrides fixture should be valid');
+  });
+});
+
+// Test suite for nameOverride TypeScript validation
+test('nameOverride TypeScript Validation', async t => {
+  const { validateSchema } = await import('../dist/src/index.js');
+
+  await t.test('reserved keyword as nameOverride is rejected', async () => {
+    const schema = {
+      schemaVersion: 1.0,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        {
+          name: 'some-field',
+          nameOverride: 'class',
+          type: 'string',
+          required: false,
+        },
+      ],
+    };
+
+    assert.throws(
+      () => validateSchema(schema),
+      /reserved keyword/,
+      'Should reject reserved keyword as nameOverride'
+    );
+  });
+
+  await t.test('invalid identifier as nameOverride is rejected', async () => {
+    const schema = {
+      schemaVersion: 1.0,
+      entityName: 'Test',
+      description: 'Test entity',
+      primaryKey: { partitionKey: 'id' },
+      fields: [
+        { name: 'id', type: 'string', required: true },
+        {
+          name: 'some-field',
+          nameOverride: 'invalid-name',
+          type: 'string',
+          required: false,
+        },
+      ],
+    };
+
+    assert.throws(
+      () => validateSchema(schema),
+      /not a valid identifier/,
+      'Should reject invalid identifier as nameOverride'
+    );
+  });
+
+  await t.test('nameOverride is preserved in validated output', async () => {
+    const schema = {
+      schemaVersion: 1.0,
+      entityName: 'Order',
+      description: 'Order entity',
+      primaryKey: { partitionKey: 'orderId' },
+      fields: [
+        { name: 'orderId', type: 'string', required: true },
+        {
+          name: '2fa-verified',
+          nameOverride: 'twoFactorVerified',
+          type: 'boolean',
+          required: false,
+        },
+        { name: 'customerId', type: 'string', required: true },
+      ],
+    };
+
+    const validated = validateSchema(schema);
+    assert.ok(validated, 'Schema should validate');
+
+    const tfaField = validated.fields.find(f => f.name === '2fa-verified');
+    assert.equal(tfaField.nameOverride, 'twoFactorVerified', 'nameOverride should be preserved');
+
+    const customerField = validated.fields.find(f => f.name === 'customerId');
+    assert.equal(customerField.nameOverride, undefined, 'Missing nameOverride should be undefined');
+  });
+
+  await t.test('valid nameOverride passes TS validation', async () => {
+    const schema = {
+      schemaVersion: 1.0,
+      entityName: 'Order',
+      description: 'Order entity',
+      primaryKey: { partitionKey: 'orderId' },
+      fields: [
+        { name: 'orderId', type: 'string', required: true },
+        {
+          name: 'order-date',
+          nameOverride: 'orderDate',
+          type: 'timestamp',
+          required: true,
+        },
+        {
+          name: 'TTL',
+          nameOverride: 'ttl',
+          type: 'number',
+          required: false,
+        },
+      ],
+    };
+
+    const validated = validateSchema(schema);
+    assert.ok(validated, 'Schema with valid nameOverrides should pass');
+    assert.equal(validated.fields[1].nameOverride, 'orderDate');
+    assert.equal(validated.fields[2].nameOverride, 'ttl');
+  });
+
+  await t.test('multiple reserved keywords are rejected', async () => {
+    const reservedWords = ['int', 'return', 'void', 'public', 'static', 'while', 'for'];
+
+    for (const word of reservedWords) {
+      const schema = {
+        schemaVersion: 1.0,
+        entityName: 'Test',
+        description: 'Test entity',
+        primaryKey: { partitionKey: 'id' },
+        fields: [
+          { name: 'id', type: 'string', required: true },
+          {
+            name: 'field1',
+            nameOverride: word,
+            type: 'string',
+            required: false,
+          },
+        ],
+      };
+
+      assert.throws(
+        () => validateSchema(schema),
+        /reserved keyword/,
+        `Should reject '${word}' as nameOverride`
+      );
+    }
+  });
+});
+
 // Cleanup after tests
 test.after(async () => {
   resetSchema();
